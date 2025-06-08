@@ -16,7 +16,7 @@ SOURCES_3D = GameObject3D.cpp
 OBJECTS_3D = $(SOURCES_3D:%.cpp=$(OBJDIR)/%.o)
 
 # Executables
-TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics $(BINDIR)/game_walkable_simple $(BINDIR)/game_3d_openworld
+TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics $(BINDIR)/game_walkable_simple $(BINDIR)/game_3d_openworld $(BINDIR)/rpg_characters $(BINDIR)/dream_weaver_complete
 
 # Default target
 all: directories $(TARGETS)
@@ -41,6 +41,14 @@ $(BINDIR)/game_walkable_simple: main_walkable_simple.cpp $(OBJDIR)/Vector2D.o $(
 $(BINDIR)/game_3d_openworld: main_3d_openworld.cpp $(OBJDIR)/GameObject3D.o
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJDIR)/GameObject3D.o
 
+# Dream Weaver's Heart RPG Characters
+$(BINDIR)/rpg_characters: main_rpg_characters.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $<
+
+# Complete Dream Weaver's Heart Game
+$(BINDIR)/dream_weaver_complete: main_dream_weaver_complete.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $<
+
 # Object files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
@@ -64,6 +72,20 @@ run-simple: $(BINDIR)/game_engine_simple_graphics
 # Run the 3D open world game
 run-3d: $(BINDIR)/game_3d_openworld
 	./$(BINDIR)/game_3d_openworld
+
+# Run the RPG characters demo
+run-rpg: $(BINDIR)/rpg_characters
+	./$(BINDIR)/rpg_characters
+
+# Run the complete Dream Weaver's Heart game
+run-dream-weaver: $(BINDIR)/dream_weaver_complete
+	./$(BINDIR)/dream_weaver_complete
+
+# Quick build and run the complete game
+game: $(BINDIR)/dream_weaver_complete
+	@echo "The Dream Weaver's Heart game compiled successfully!"
+	@echo "Starting the game..."
+	./$(BINDIR)/dream_weaver_complete
 
 # Create sample assets
 assets: directories

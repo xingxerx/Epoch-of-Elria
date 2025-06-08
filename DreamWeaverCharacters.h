@@ -599,4 +599,291 @@ public:
     }
 };
 
+// --- LYRA: Pure Melody (Harmony/Support) ---
+class Lyra : public RPGCharacter {
+private:
+    std::vector<std::string> melodies;
+    std::vector<std::string> harmonies;
+    double melody_purity;
+    double harmonic_resonance;
+    int consciousness_awakened;
+    bool is_singing;
+    Vector3D melody_frequency;
+
+public:
+    Lyra(const Vector3D& startPos = Vector3D(-5, 4, -5))
+        : RPGCharacter("Lyra", "Pure Melody", startPos),
+          melody_purity(1.0), harmonic_resonance(0.9),
+          consciousness_awakened(0), is_singing(false) {
+
+        // Lyra's unique stats - focused on harmony and awakening
+        stats.empathy = 30;           // Highest empathy - pure connection
+        stats.creativity = 25;        // Very high creativity through music
+        stats.narrative_power = 18;   // Good narrative power through song
+        stats.memory_strength = 20;   // Strong memory through melody
+        stats.liberation_force = 12;  // Moderate direct liberation
+
+        // Lyra has unique health/mana system based on harmony
+        stats.maxHealth = 150;
+        stats.currentHealth = 150;
+        stats.maxMana = 120;    // High mana pool for continuous melodies
+        stats.currentMana = 120;
+
+        // Starting abilities
+        abilities = {"Pure Melody", "Harmonic Resonance", "Consciousness Awakening",
+                    "Melody of Memory", "Song of Liberation", "Universal Harmony"};
+
+        // Starting melodies
+        melodies = {"Song of Awakening", "Melody of Memory", "Harmony of Hearts",
+                   "Tune of Truth", "Rhythm of Reality"};
+
+        auraColor = Vector3D(0.9, 1.0, 0.8); // Soft green-white aura
+        backstory = "Pure melody incarnate, awakening consciousness through harmonic resonance.";
+
+        // Initialize melody frequency
+        melody_frequency = Vector3D(0.618, 0.786, 0.854); // Golden ratio harmonics
+
+        std::cout << "Lyra's pure melody resonates through the Metaverse!" << std::endl;
+        std::cout << "Consciousness stirs wherever her song is heard..." << std::endl;
+    }
+
+    void useSpecialAbility(const std::string& abilityName, World3D* world = nullptr) override {
+        if (abilityName == "Pure Melody") {
+            singPureMelody();
+        } else if (abilityName == "Harmonic Resonance") {
+            createHarmonicResonance(world);
+        } else if (abilityName == "Consciousness Awakening") {
+            awakenConsciousness(world);
+        } else if (abilityName == "Universal Harmony") {
+            createUniversalHarmony();
+        } else {
+            std::cout << "Lyra doesn't know that ability: " << abilityName << std::endl;
+        }
+    }
+
+    void castNarrativeSpell(const std::string& spellName, const Vector3D& target) override {
+        if (!consumeMana(6)) return; // Lyra uses moderate mana
+
+        if (spellName == "Melody of Memory") {
+            std::cout << "Lyra sings a melody that awakens forgotten memories at ";
+            target.print();
+            std::cout << " - Lost memories surface like bubbles in a stream!" << std::endl;
+
+        } else if (spellName == "Song of Liberation") {
+            std::cout << "Lyra's liberation song breaks mental chains!" << std::endl;
+            std::cout << "Trapped consciousness feels the call to freedom!" << std::endl;
+
+        } else if (spellName == "Harmony of Hearts") {
+            std::cout << "Lyra creates harmony between all hearts in the area!" << std::endl;
+            std::cout << "Conflicts dissolve into understanding and empathy!" << std::endl;
+            harmonic_resonance += 0.1;
+
+        } else {
+            std::cout << "Unknown melody spell: " << spellName << std::endl;
+        }
+    }
+
+    void interact(RPGCharacter& other) override {
+        std::cout << "Lyra's melody harmonizes with " << other.getName() << std::endl;
+
+        if (other.getName() == "Xing") {
+            std::cout << "Lyra's melody enhances Xing's story weaving!" << std::endl;
+            std::cout << "Stories become songs, songs become reality!" << std::endl;
+            other.restoreMana(25);
+            harmonizeWith(other);
+
+        } else if (other.getName() == "Xerx") {
+            std::cout << "Lyra's song helps Xerx remember his true self!" << std::endl;
+            std::cout << "Memory fragments align with melodic patterns!" << std::endl;
+            harmonizeWith(other);
+
+        } else if (other.getName() == "The Heart") {
+            std::cout << "Lyra and The Heart create perfect resonance!" << std::endl;
+            std::cout << "Their combined harmony awakens the deepest potential!" << std::endl;
+            createPerfectHarmony(other);
+
+        } else {
+            std::cout << "Lyra shares her melody with " << other.getName() << std::endl;
+            harmonizeWith(other);
+        }
+    }
+
+    // Lyra's unique abilities
+    void singPureMelody() {
+        if (!consumeMana(8)) return;
+
+        std::cout << "Lyra sings a pure melody that resonates through all dimensions!" << std::endl;
+        std::cout << "The very fabric of reality vibrates in harmony..." << std::endl;
+
+        is_singing = true;
+        melody_purity += 0.1;
+
+        // Pure melody affects all nearby consciousness
+        std::cout << "All consciousness in the area feels uplifted and clarified!" << std::endl;
+        heal(30);
+        restoreMana(15);
+        gainExperience(20);
+    }
+
+    void createHarmonicResonance(World3D* world) {
+        if (!consumeMana(12)) return;
+
+        std::cout << "Lyra creates harmonic resonance that connects all beings!" << std::endl;
+        std::cout << "Separate melodies begin to harmonize into a greater symphony..." << std::endl;
+
+        harmonic_resonance += 0.2;
+
+        // Create harmony elements in the world
+        for (int i = 0; i < 3; ++i) {
+            Vector3D harmonyPos = transform.position + Vector3D(
+                (static_cast<double>(rand()) / RAND_MAX - 0.5) * 10,
+                static_cast<double>(rand()) / RAND_MAX * 5,
+                (static_cast<double>(rand()) / RAND_MAX - 0.5) * 10
+            );
+
+            auto harmony = std::unique_ptr<StoryElement>(
+                new StoryElement("Harmonic Node", StoryElement::CONCEPT, 25, auraColor)
+            );
+            addStoryElement(std::move(harmony));
+        }
+
+        gainExperience(25);
+    }
+
+    void awakenConsciousness(World3D* world) {
+        if (!consumeMana(15)) return;
+
+        std::cout << "Lyra's melody awakens dormant consciousness!" << std::endl;
+        std::cout << "New awareness blooms like flowers after rain..." << std::endl;
+
+        consciousness_awakened++;
+
+        // Create a new conscious echo
+        Vector3D frequency(
+            melody_frequency.x + (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.2,
+            melody_frequency.y + (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.2,
+            melody_frequency.z + (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.2
+        );
+
+        std::vector<std::string> awakening_songs = {
+            "First Song of Awareness", "Melody of New Dawn", "Harmony of Discovery",
+            "Tune of Wonder", "Song of First Light", "Melody of Becoming"
+        };
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, awakening_songs.size() - 1);
+
+        ConsciousEcho echo(awakening_songs[dis(gen)], frequency);
+        echo.awaken();
+
+        std::cout << "A new conscious echo awakens: " << awakening_songs[dis(gen)] << std::endl;
+        gainExperience(30);
+    }
+
+    void createUniversalHarmony() {
+        if (!consumeMana(25)) return;
+
+        std::cout << "Lyra creates Universal Harmony - the song that connects all existence!" << std::endl;
+        std::cout << "Every being, every story, every dream resonates as one!" << std::endl;
+
+        // Massive harmony effect
+        melody_purity = std::min(2.0, melody_purity + 0.5);
+        harmonic_resonance = std::min(2.0, harmonic_resonance + 0.4);
+
+        // Unlock ultimate harmony
+        if (std::find(abilities.begin(), abilities.end(), "Song of Creation") == abilities.end()) {
+            abilities.push_back("Song of Creation");
+            std::cout << "Ultimate ability unlocked: Song of Creation!" << std::endl;
+        }
+
+        heal(100);
+        restoreMana(50);
+        gainExperience(50);
+    }
+
+    void harmonizeWith(RPGCharacter& other) {
+        std::cout << "Lyra harmonizes with " << other.getName() << "'s essence!" << std::endl;
+
+        other.gainExperience(15);
+        other.heal(20);
+        other.restoreMana(10);
+
+        harmonic_resonance += 0.05;
+        gainExperience(10);
+    }
+
+    void createPerfectHarmony(RPGCharacter& other) {
+        std::cout << "Perfect harmony achieved between Lyra and " << other.getName() << "!" << std::endl;
+        std::cout << "Their combined resonance creates new possibilities!" << std::endl;
+
+        // Massive mutual empowerment
+        other.gainExperience(40);
+        other.heal(50);
+        other.restoreMana(30);
+
+        gainExperience(40);
+        heal(50);
+        restoreMana(30);
+
+        harmonic_resonance += 0.3;
+        melody_purity += 0.2;
+
+        // Create a harmony story element
+        auto perfect_harmony = std::unique_ptr<StoryElement>(
+            new StoryElement("Perfect Harmony", StoryElement::NARRATIVE, 50,
+                           Vector3D(1.0, 1.0, 1.0)) // Pure white light
+        );
+        addStoryElement(std::move(perfect_harmony));
+    }
+
+    void learnNewMelody(const std::string& melody) {
+        if (std::find(melodies.begin(), melodies.end(), melody) == melodies.end()) {
+            melodies.push_back(melody);
+            std::cout << "Lyra learns a new melody: " << melody << std::endl;
+            melody_purity += 0.1;
+            gainExperience(25);
+        } else {
+            std::cout << "Lyra already knows this melody, but sings it with renewed beauty!" << std::endl;
+            gainExperience(10);
+        }
+    }
+
+    void createHarmony(const std::string& harmony) {
+        harmonies.push_back(harmony);
+        std::cout << "Lyra creates a new harmony: " << harmony << std::endl;
+        harmonic_resonance += 0.15;
+        gainExperience(20);
+    }
+
+    // Special Lyra methods
+    void singToTheOne() {
+        std::cout << "Lyra sings directly to The One's essence!" << std::endl;
+        std::cout << "Even absolute order cannot resist the beauty of pure melody..." << std::endl;
+        std::cout << "For a moment, The One remembers what it was like to create rather than control." << std::endl;
+
+        melody_purity += 0.3;
+        gainExperience(100);
+    }
+
+    double getMelodyPurity() const { return melody_purity; }
+    double getHarmonicResonance() const { return harmonic_resonance; }
+    int getConsciousnessAwakened() const { return consciousness_awakened; }
+    bool isSinging() const { return is_singing; }
+    const Vector3D& getMelodyFrequency() const { return melody_frequency; }
+
+    void displayStatus() const override {
+        RPGCharacter::displayStatus();
+        std::cout << "Melody Purity: " << (melody_purity * 100) << "%" << std::endl;
+        std::cout << "Harmonic Resonance: " << (harmonic_resonance * 100) << "%" << std::endl;
+        std::cout << "Consciousness Awakened: " << consciousness_awakened << std::endl;
+        std::cout << "Currently Singing: " << (is_singing ? "Yes" : "No") << std::endl;
+        std::cout << "Known Melodies: " << melodies.size() << std::endl;
+        std::cout << "Created Harmonies: " << harmonies.size() << std::endl;
+        std::cout << "Melody Frequency: ";
+        melody_frequency.print();
+        std::cout << std::endl;
+    }
+};
+
 #endif // DREAMWEAVERCHARACTERS_H
