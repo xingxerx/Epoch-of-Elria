@@ -316,3 +316,126 @@ char ConsoleRenderer::ColorToChar(const Color& color) {
 bool ConsoleRenderer::IsInBounds(int x, int y) const {
     return x >= 0 && x < viewportWidth && y >= 0 && y < viewportHeight;
 }
+
+// --- HTMLRenderer Implementation ---
+HTMLRenderer::HTMLRenderer(int width, int height) : viewportWidth(width), viewportHeight(height) {
+    Clear();
+}
+
+void HTMLRenderer::Clear(const Color& clearColor) {
+    drawCommands.clear();
+    htmlContent = "";
+
+    // Start HTML document with SVG
+    std::stringstream html;
+    html << "<!DOCTYPE html>\n";
+    html << "<html>\n<head>\n";
+    html << "<title>Game Engine Output</title>\n";
+    html << "<style>\n";
+    html << "body { margin: 0; padding: 20px; background-color: " << ColorToHex(clearColor) << "; }\n";
+    html << "svg { border: 1px solid #333; }\n";
+    html << "</style>\n";
+    html << "</head>\n<body>\n";
+    html << "<h1>Game Engine - Frame Output</h1>\n";
+    html << "<svg width=\"" << viewportWidth << "\" height=\"" << viewportHeight << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+    html << "  <!-- Background -->\n";
+    html << "  <rect x=\"0\" y=\"0\" width=\"" << viewportWidth << "\" height=\"" << viewportHeight << "\" fill=\"" << ColorToHex(clearColor) << "\"/>\n";
+
+    htmlContent = html.str();
+}
+
+void HTMLRenderer::DrawRectangle(const Vector2D& position, const Vector2D& size, const Color& color) {
+    std::stringstream cmd;
+    cmd << "  <rect x=\"" << position.x << "\" y=\"" << position.y << "\" ";
+    cmd << "width=\"" << size.x << "\" height=\"" << size.y << "\" ";
+    cmd << "fill=\"" << ColorToHex(color) << "\" fill-opacity=\"" << color.a << "\"/>\n";
+    drawCommands.push_back(cmd.str());
+}
+
+void HTMLRenderer::DrawCircle(const Vector2D& position, double radius, const Color& color) {
+    std::stringstream cmd;
+    cmd << "  <circle cx=\"" << position.x << "\" cy=\"" << position.y << "\" ";
+    cmd << "r=\"" << radius << "\" ";
+    cmd << "fill=\"" << ColorToHex(color) << "\" fill-opacity=\"" << color.a << "\"/>\n";
+    drawCommands.push_back(cmd.str());
+}
+
+void HTMLRenderer::DrawTexture(const SVGTexture& texture, const Vector2D& position, const Vector2D& scale) {
+    if (!texture.IsLoaded()) return;
+
+    std::stringstream cmd;
+    cmd << "  <g transform=\"translate(" << position.x << "," << position.y << ") scale(" << scale.x << "," << scale.y << ")\">\n";
+
+    // Extract the inner content of the SVG (everything between <svg> tags)
+    std::string svgContent = texture.GetSVGContent();
+    size_t startPos = svgContent.find('>');
+    size_t endPos = svgContent.rfind("</svg>");
+
+    if (startPos != std::string::npos && endPos != std::string::npos && startPos < endPos) {
+        std::string innerSVG = svgContent.substr(startPos + 1, endPos - startPos - 1);
+        cmd << "    " << innerSVG << "\n";
+    }
+
+    cmd << "  </g>\n";
+    drawCommands.push_back(cmd.str());
+}
+
+void HTMLRenderer::DrawLine(const Vector2D& start, const Vector2D& end, const Color& color, double thickness) {
+    std::stringstream cmd;
+    cmd << "  <line x1=\"" << start.x << "\" y1=\"" << start.y << "\" ";
+    cmd << "x2=\"" << end.x << "\" y2=\"" << end.y << "\" ";
+    cmd << "stroke=\"" << ColorToHex(color) << "\" stroke-width=\"" << thickness << "\" stroke-opacity=\"" << color.a << "\"/>\n";
+    drawCommands.push_back(cmd.str());
+}
+
+void HTMLRenderer::DrawText(const std::string& text, const Vector2D& position, const Color& color, double fontSize) {
+    std::stringstream cmd;
+    cmd << "  <text x=\"" << position.x << "\" y=\"" << position.y << "\" ";
+    cmd << "font-family=\"monospace\" font-size=\"" << fontSize << "\" ";
+    cmd << "fill=\"" << ColorToHex(color) << "\" fill-opacity=\"" << color.a << "\">";
+    cmd << text << "</text>\n";
+    drawCommands.push_back(cmd.str());
+}
+
+void HTMLRenderer::Present() {
+    // Finalize HTML content
+    std::stringstream finalHtml;
+    finalHtml << htmlContent;
+
+    // Add all draw commands
+    for (const auto& cmd : drawCommands) {
+        finalHtml << cmd;
+    }
+
+    // Close SVG and HTML
+    finalHtml << "</svg>\n";
+    finalHtml << "<p>Frame rendered with " << drawCommands.size() << " draw calls.</p>\n";
+    finalHtml << "</body>\n</html>";
+
+    htmlContent = finalHtml.str();
+}
+
+void HTMLRenderer::SetViewport(int width, int height) {
+    viewportWidth = width;
+    viewportHeight = height;
+}
+
+void HTMLRenderer::SaveToFile(const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << htmlContent;
+        file.close();
+        std::cout << "HTML output saved to: " << filename << std::endl;
+    } else {
+        std::cerr << "Failed to save HTML file: " << filename << std::endl;
+    }
+}
+
+std::string HTMLRenderer::ColorToHex(const Color& color) {
+    std::stringstream hex;
+    hex << "#" << std::hex << std::setfill('0');
+    hex << std::setw(2) << static_cast<int>(color.r * 255);
+    hex << std::setw(2) << static_cast<int>(color.g * 255);
+    hex << std::setw(2) << static_cast<int>(color.b * 255);
+    return hex.str();
+}
