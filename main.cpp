@@ -137,8 +137,9 @@ public:
     }
 
     void Draw() const override {
-        std::cout << "PLAYER: ";
-        GameObject::Draw(); // Call base class Draw
+        std::cout << "PLAYER at ";
+        position.print(); // Print the player's current position
+        std::cout << std::endl; // Ensure player status is on its own line
         // Add player-specific drawing logic here
     }
 };
