@@ -12,7 +12,7 @@ SOURCES = Vector2D.cpp graphics.cpp GameEnvironment.cpp GameObject.cpp
 OBJECTS = $(SOURCES:%.cpp=$(OBJDIR)/%.o)
 
 # Executables
-TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_with_graphics
+TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics
 
 # Default target
 all: directories $(TARGETS)
@@ -25,9 +25,9 @@ directories:
 $(BINDIR)/game_engine_parallel_demo: main.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $<
 
-# Enhanced game engine with graphics
-$(BINDIR)/game_engine_with_graphics: main_with_graphics.cpp $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJECTS)
+# Simple game engine with SVG graphics
+$(BINDIR)/game_engine_simple_graphics: main_simple_graphics.cpp $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
 
 # Object files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
@@ -45,9 +45,9 @@ distclean: clean
 run-original: $(BINDIR)/game_engine_parallel_demo
 	./$(BINDIR)/game_engine_parallel_demo
 
-# Run the enhanced game
-run-enhanced: $(BINDIR)/game_engine_with_graphics
-	./$(BINDIR)/game_engine_with_graphics
+# Run the simple graphics game
+run-simple: $(BINDIR)/game_engine_simple_graphics
+	./$(BINDIR)/game_engine_simple_graphics
 
 # Create sample assets
 assets: directories
