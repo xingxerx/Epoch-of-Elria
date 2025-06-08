@@ -187,11 +187,11 @@ public:
 };
 
 
-// Function to update a range of collectibles
-void UpdateCollectiblesRange(std::vector<Collectible*>& collectibles_subset, double deltaTime) {
-    for (Collectible* collect : collectibles_subset) {
-        if (!collect->isCollected()) {
-            collect->Update(deltaTime);
+// Function to update a range of collectibles using indices
+void UpdateCollectiblesRange(std::vector<Collectible*>& collectibles, size_t start_index, size_t end_index, double deltaTime) {
+    for (size_t i = start_index; i < end_index; ++i) {
+        if (i < collectibles.size() && !collectibles[i]->isCollected()) {
+            collectibles[i]->Update(deltaTime);
         }
     }
 }
@@ -204,8 +204,8 @@ void RunGameSimulation() {
     Player player(100, 100);
 
     std::vector<Collectible*> collectibles;
-    // Let's create a smaller number of collectibles for debugging
-    const int NUM_COLLECTIBLES = 100;
+    // Create a good number of collectibles to demonstrate parallel processing
+    const int NUM_COLLECTIBLES = 1000;
     for (int i = 0; i < NUM_COLLECTIBLES; ++i) {
         collectibles.push_back(new Collectible(
             static_cast<double>(rand() % 800), // Random X (assuming canvas width 800)
@@ -231,11 +231,32 @@ void RunGameSimulation() {
         player.Update(deltaTime);
         player.Draw(); // Draw player immediately after update
 
-        // 2. Update Collectibles (Sequential for debugging)
-        // Let's temporarily disable threading to isolate the issue
-        for (Collectible* collect : collectibles) {
-            if (!collect->isCollected()) {
-                collect->Update(deltaTime);
+        // 2. Update Collectibles in Parallel (Improved Version)
+        std::vector<std::thread> threads;
+
+        // Ensure we don't create more threads than collectibles
+        unsigned int effective_threads = std::min(num_threads, static_cast<unsigned int>(collectibles.size()));
+        if (effective_threads == 0) effective_threads = 1;
+
+        // Divide collectibles into chunks for each thread
+        size_t collectibles_per_thread = collectibles.size() / effective_threads;
+        if (collectibles_per_thread == 0) collectibles_per_thread = 1;
+
+        for (unsigned int i = 0; i < effective_threads; ++i) {
+            size_t start_index = i * collectibles_per_thread;
+            size_t end_index = (i == effective_threads - 1) ? collectibles.size() : (start_index + collectibles_per_thread);
+
+            // Skip if this thread would have no work
+            if (start_index >= collectibles.size()) break;
+
+            // Launch a thread to update this range using indices (safer approach)
+            threads.emplace_back(UpdateCollectiblesRange, std::ref(collectibles), start_index, end_index, deltaTime);
+        }
+
+        // Wait for all threads to complete their updates
+        for (std::thread& t : threads) {
+            if (t.joinable()) {
+                t.join();
             }
         }
         // At this point, all collectibles' positions have been updated in parallel.
