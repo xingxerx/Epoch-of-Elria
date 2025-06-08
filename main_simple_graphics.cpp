@@ -180,8 +180,8 @@ void RunSimpleGraphicsDemo() {
     std::cout << "\n=== Simple SVG Graphics Demo ===" << std::endl;
     
     // Create renderers
-    auto consoleRenderer = std::make_unique<ConsoleRenderer>(100, 25);
-    auto htmlRenderer = std::make_unique<HTMLRenderer>(1000, 600);
+    std::unique_ptr<ConsoleRenderer> consoleRenderer(new ConsoleRenderer(100, 25));
+    std::unique_ptr<HTMLRenderer> htmlRenderer(new HTMLRenderer(1000, 600));
     
     // Create game objects
     SimplePlayer player(100, 300);
