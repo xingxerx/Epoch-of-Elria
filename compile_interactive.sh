@@ -3,28 +3,52 @@
 # Compilation script for the interactive SFML version
 # This script attempts to compile the SFML version with different library configurations
 
+CXX="${CXX:-g++}" # Use CXX environment variable if set, otherwise default to g++
+CPP_STD="-std=c++11"
+PTHREAD_FLAG="-pthread"
+COMMON_COMPILE_FLAGS="$CPP_STD $PTHREAD_FLAG"
+SOURCE_FILES="main_interactive.cpp Vector2D.cpp"
+OUTPUT_BINARY="game_interactive"
+OUTPUT_BINARY_SIMPLE="game_interactive_simple"
+
 echo "=== Compiling Interactive Game with SFML ==="
 
-# Check if SFML is installed
+SFML_FLAGS=""
+SFML_FLAGS_CMD=""
+
+# Try to get SFML flags using pkg-config
 if pkg-config --exists sfml-all; then
-    echo "SFML found via pkg-config"
-    SFML_FLAGS=$(pkg-config --cflags --libs sfml-all)
-    g++ main_interactive.cpp Vector2D.cpp -o game_interactive $SFML_FLAGS -std=c++11 -pthread
-elif [ -d "/usr/include/SFML" ]; then
-    echo "SFML found in system directories"
-    g++ main_interactive.cpp Vector2D.cpp -o game_interactive -lsfml-graphics -lsfml-window -lsfml-system -std=c++11 -pthread
+    echo "SFML found via pkg-config (sfml-all)."
+    SFML_FLAGS_CMD="pkg-config --cflags --libs sfml-all"
+elif pkg-config --exists sfml-graphics && pkg-config --exists sfml-window && pkg-config --exists sfml-system; then
+    echo "SFML found via pkg-config (sfml-graphics, sfml-window, sfml-system)."
+    SFML_FLAGS_CMD="pkg-config --cflags --libs sfml-graphics sfml-window sfml-system"
 else
-    echo "SFML not found. Please install SFML:"
+    echo "SFML not found via pkg-config. Please ensure SFML development libraries are installed and pkg-config is aware of them."
     echo "  Ubuntu/Debian: sudo apt-get install libsfml-dev"
     echo "  Fedora: sudo dnf install SFML-devel"
     echo "  Arch: sudo pacman -S sfml"
     echo ""
-    echo "Alternatively, you can run the simple walkable version:"
-    echo "  ./game_walkable_simple"
+    echo "If SFML is installed in a custom location, you may need to set PKG_CONFIG_PATH."
+    echo "Attempting compilation with common SFML linker flags as a fallback (may not work if headers are not in default paths)."
+    SFML_FLAGS="-lsfml-graphics -lsfml-window -lsfml-system" # Fallback, less reliable
+fi
+
+if [ -n "$SFML_FLAGS_CMD" ]; then
+    SFML_FLAGS=$($SFML_FLAGS_CMD)
+    if [ $? -ne 0 ]; then
+        echo "Error: pkg-config command failed: $SFML_FLAGS_CMD"
+        SFML_FLAGS="" # Clear flags if command failed
+    fi
+fi
+
+if [ -z "$SFML_FLAGS" ]; then
+    echo "Could not determine SFML flags. Aborting."
     exit 1
 fi
 
-if [ $? -eq 0 ]; then
+echo "Attempting to compile: $CXX $SOURCE_FILES -o $OUTPUT_BINARY $SFML_FLAGS $COMMON_COMPILE_FLAGS"
+if $CXX $SOURCE_FILES -o $OUTPUT_BINARY $SFML_FLAGS $COMMON_COMPILE_FLAGS; then
     echo "Compilation successful!"
     echo "Run with: ./game_interactive"
 else
@@ -32,6 +56,7 @@ else
     # Create a simplified version without ImGui
     echo "Creating simplified SFML version..."
     
+    # The C++ code for main_interactive_simple.cpp is embedded here. Its content remains unchanged.
     cat > main_interactive_simple.cpp << 'EOF'
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -168,13 +193,15 @@ int main() {
 EOF
     
     echo "Compiling simplified version..."
-    g++ main_interactive_simple.cpp Vector2D.cpp -o game_interactive_simple -lsfml-graphics -lsfml-window -lsfml-system -std=c++11 -pthread
-    
-    if [ $? -eq 0 ]; then
+    # Use the same SFML_FLAGS and COMMON_COMPILE_FLAGS obtained earlier
+    echo "Attempting to compile: $CXX main_interactive_simple.cpp Vector2D.cpp -o $OUTPUT_BINARY_SIMPLE $SFML_FLAGS $COMMON_COMPILE_FLAGS"
+    if $CXX main_interactive_simple.cpp Vector2D.cpp -o $OUTPUT_BINARY_SIMPLE $SFML_FLAGS $COMMON_COMPILE_FLAGS; then
         echo "Simplified version compiled successfully!"
-        echo "Run with: ./game_interactive_simple"
+        echo "Run with: ./$OUTPUT_BINARY_SIMPLE"
     else
-        echo "SFML compilation failed. Please install SFML or use the console version:"
-        echo "  ./game_walkable_simple"
+        echo "Compilation of simplified SFML version also failed."
+        echo "Please check compiler errors and ensure SFML is correctly installed."
+        echo "  (e.g., Ubuntu/Debian: sudo apt-get install libsfml-dev)"
+        echo "If a console version is available, you might try that: ./game_walkable_simple" # This refers to a non-SFML alternative
     fi
 fi
