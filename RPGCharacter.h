@@ -89,6 +89,7 @@ public:
     
     // Getters
     const CharacterStats& getStats() const { return stats; }
+    CharacterStats& getStats() { return stats; }
     const std::string& getCharacterClass() const { return characterClass; }
     bool getIsAwakened() const { return isAwakened; }
     double getAwakenessLevel() const { return awakenessLevel; }
