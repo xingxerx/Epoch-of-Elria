@@ -8,6 +8,7 @@
 
 // Forward declarations
 class GameEnvironment;
+class Camera;
 
 // --- GameObject Class ---
 // A base class for any entity in the game world (player, enemy, projectile, etc.).

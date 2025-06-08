@@ -1,6 +1,9 @@
 #include "GameObject.h"
-#include "GameEnvironment.h"
 #include <cmath>
+
+// Forward declaration to avoid circular dependency
+class Camera;
+class GameEnvironment;
 
 // --- GameObject Implementation ---
 GameObject::GameObject(std::string obj_name, double start_x, double start_y, double obj_width, double obj_height)
