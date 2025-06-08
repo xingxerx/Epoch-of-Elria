@@ -173,7 +173,7 @@ public:
         // Collectibles could also have their own movement/animation logic
         // For now, they just stay put.
         // Simulate some minor "work" that would be done in parallel
-        std::this_thread::sleep_for(std::chrono::microseconds(100)); // Simulate a tiny bit of work
+        std::this_thread::sleep_for(std::chrono::microseconds(10)); // Simulate a tiny bit of work
         GameObject::Update(deltaTime);
     }
 
@@ -204,8 +204,8 @@ void RunGameSimulation() {
     Player player(100, 100);
 
     std::vector<Collectible*> collectibles;
-    // Let's create a good number of collectibles to make parallel updates more noticeable
-    const int NUM_COLLECTIBLES = 1000;
+    // Let's create a smaller number of collectibles for debugging
+    const int NUM_COLLECTIBLES = 100;
     for (int i = 0; i < NUM_COLLECTIBLES; ++i) {
         collectibles.push_back(new Collectible(
             static_cast<double>(rand() % 800), // Random X (assuming canvas width 800)
@@ -231,34 +231,11 @@ void RunGameSimulation() {
         player.Update(deltaTime);
         player.Draw(); // Draw player immediately after update
 
-        // 2. Update Collectibles in Parallel
-        std::vector<std::thread> threads;
-        std::vector<std::vector<Collectible*>> collectibles_subsets; // Store subsets to keep them alive
-
-        // Divide collectibles into chunks for each thread
-        size_t collectibles_per_thread = collectibles.size() / num_threads;
-
-        for (unsigned int i = 0; i < num_threads; ++i) {
-            size_t start_index = i * collectibles_per_thread;
-            size_t end_index = (i == num_threads - 1) ? collectibles.size() : (start_index + collectibles_per_thread);
-
-            // Create a sub-vector for each thread (copy pointers for the subset)
-            std::vector<Collectible*> collectibles_subset;
-            for (size_t j = start_index; j < end_index; ++j) {
-                collectibles_subset.push_back(collectibles[j]);
-            }
-
-            // Store the subset to keep it alive during thread execution
-            collectibles_subsets.push_back(collectibles_subset);
-
-            // Launch a thread to update this subset
-            threads.emplace_back(UpdateCollectiblesRange, std::ref(collectibles_subsets.back()), deltaTime);
-        }
-
-        // Wait for all threads to complete their updates
-        for (std::thread& t : threads) {
-            if (t.joinable()) {
-                t.join();
+        // 2. Update Collectibles (Sequential for debugging)
+        // Let's temporarily disable threading to isolate the issue
+        for (Collectible* collect : collectibles) {
+            if (!collect->isCollected()) {
+                collect->Update(deltaTime);
             }
         }
         // At this point, all collectibles' positions have been updated in parallel.
