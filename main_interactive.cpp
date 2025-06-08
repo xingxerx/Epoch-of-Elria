@@ -153,11 +153,56 @@ public:
 };
 
 class Player : public GameObject {
+private:
+    double speed;
+    sf::RectangleShape sprite;
+
 public:
-    Player(double x, double y) : GameObject("Player", x, y) {
+    Player(double x, double y) : GameObject("Player", x, y), speed(200.0) {
         std::cout << "Player created!" << std::endl;
-        velocity = Vector2D(50,0); // Move right
+        velocity = Vector2D(0, 0); // Start stationary
+
+        // Create visual sprite
+        sprite.setSize(sf::Vector2f(50, 50));
+        sprite.setFillColor(sf::Color::Blue);
+        sprite.setPosition(static_cast<float>(x), static_cast<float>(y));
     }
+
+    void HandleInput() {
+        velocity = Vector2D(0, 0); // Reset velocity
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            velocity.y = -speed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            velocity.y = speed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            velocity.x = -speed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            velocity.x = speed;
+        }
+    }
+
+    void Update(double deltaTime) override {
+        HandleInput();
+        GameObject::Update(deltaTime);
+
+        // Keep player on screen
+        if (position.x < 0) position.x = 0;
+        if (position.y < 0) position.y = 0;
+        if (position.x > 1230) position.x = 1230; // 1280 - 50
+        if (position.y > 670) position.y = 670;   // 720 - 50
+
+        // Update sprite position
+        sprite.setPosition(static_cast<float>(position.x), static_cast<float>(position.y));
+    }
+
+    void DrawSFML(sf::RenderTarget& target) const {
+        target.draw(sprite);
+    }
+
     void Draw() const override {
         std::cout << "PLAYER at ";
         position.print();
@@ -168,11 +213,37 @@ public:
 class Collectible : public GameObject {
     bool collected = false;
     int value = 10;
+    sf::CircleShape sprite;
+    double animationTime = 0.0;
+    Vector2D originalPosition;
+
 public:
-    Collectible(double x, double y) : GameObject("Collectible", x, y) {}
+    Collectible(double x, double y) : GameObject("Collectible", x, y), originalPosition(x, y) {
+        sprite.setRadius(10);
+        sprite.setFillColor(sf::Color::Yellow);
+        sprite.setPosition(static_cast<float>(x), static_cast<float>(y));
+    }
+
     bool isCollected() const { return collected; }
     void setCollected(bool c) { collected = c; }
     int getValue() const { return value; }
+
+    void Update(double deltaTime) override {
+        if (!collected) {
+            // Animate bobbing motion
+            animationTime += deltaTime * 2.0;
+            position.y = originalPosition.y + std::sin(animationTime) * 5.0;
+            sprite.setPosition(static_cast<float>(position.x), static_cast<float>(position.y));
+        }
+        GameObject::Update(deltaTime);
+    }
+
+    void DrawSFML(sf::RenderTarget& target) const {
+        if (!collected) {
+            target.draw(sprite);
+        }
+    }
+
     void Draw() const override {
         if (!collected) {
             std::cout << "COLLECTIBLE (value: " << value << ") at ";
@@ -218,9 +289,22 @@ int main() {
         ImGui::Begin("Game Controls");
         ImGui::Text("DeltaTime: %.3f ms (%.1f FPS)", deltaTime * 1000.0, 1.0 / deltaTime);
         ImGui::Text("Score: %d", score);
+        ImGui::Text("Collectibles: %zu", collectibles.size());
+        ImGui::Separator();
+        ImGui::Text("Controls:");
+        ImGui::Text("WASD or Arrow Keys - Move Player");
+        ImGui::Text("ESC - Exit Game");
+        ImGui::Separator();
         if (ImGui::Button("Add Collectible")) {
              collectibles.push_back(std::make_unique<Collectible>(rand() % 1000 + 100.0, rand() % 500 + 100.0));
              std::cout << "New collectible added." << std::endl;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Reset Game")) {
+            score = 0;
+            collectibles.clear();
+            player = Player(400, 300); // Reset player position
+            std::cout << "Game reset!" << std::endl;
         }
         ImGui::End();
 
@@ -248,19 +332,16 @@ int main() {
         // --- Rendering ---
         window.clear(sf::Color(70, 70, 90)); // Clear window with a dark color
 
-        // --- Game Object Rendering (Placeholder) ---
-        // This is where you would draw your game objects to the SFML window.
-        // For example, player.Draw(window);
-        // The current GameObject::Draw() prints to std::cout, which goes to the ImGui console.
-        // To draw with SFML, you'd modify GameObject::Draw to take an sf::RenderTarget&
-        // and use sf::RectangleShape, sf::CircleShape, sf::Sprite, etc.
-        // For SVG, you'd need an SVG rendering library that can output to an SFML texture or draw commands.
-        
-        // For now, we can call the existing Draw methods to see their output in the ImGui console:
-        // player.Draw();
-        // for (const auto& collectible : collectibles) {
-        //     if (collectible) collectible->Draw();
-        // }
+        // --- Game Object Rendering ---
+        // Draw player
+        player.DrawSFML(window);
+
+        // Draw collectibles
+        for (const auto& collectible : collectibles) {
+            if (collectible) {
+                collectible->DrawSFML(window);
+            }
+        }
         // --- End Game Object Rendering ---
 
         ImGui::SFML::Render(window); // Render ImGui

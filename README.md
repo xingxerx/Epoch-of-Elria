@@ -51,6 +51,13 @@ make all
 # Run the enhanced graphics version
 ./game_engine_simple_graphics
 
+# Run the walkable game (turn-based)
+./game_walkable_simple
+
+# Run the interactive SFML version (real-time)
+./compile_interactive.sh  # Compile first
+./game_interactive_simple
+
 # Or use make targets
 make run-original
 make run-simple
@@ -91,6 +98,12 @@ Epoch of Elria/
 - **Console rendering**: ASCII-based real-time display
 - **HTML/SVG export**: High-quality vector graphics output
 - **Frame capture**: Automatic screenshot generation
+
+### Interactive Controls
+- **Walkable gameplay**: Turn-based and real-time movement options
+- **WASD/Arrow keys**: Standard movement controls
+- **Command interface**: Text-based commands for turn-based play
+- **SFML integration**: Real-time graphics with smooth movement
 
 ## 🔧 Technical Highlights
 

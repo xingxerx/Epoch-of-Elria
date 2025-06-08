@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Game Engine Output</title>
+<style>
+body { margin: 0; padding: 20px; background-color: #334c7f; }
+svg { border: 1px solid #333; }
+</style>
+</head>
+<body>
+<h1>Game Engine - Frame Output</h1>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="800" height="600" fill="#334c7f"/>
+  <g transform="translate(400,250) scale(1,1)">
+    
+  <rect x="10" y="15" width="30" height="25" fill="#4169E1" rx="5"/>
+  <circle cx="25" cy="10" r="7.5" fill="#FFE4B5"/>
+  <circle cx="22.5" cy="9" r="2" fill="black"/>
+  <circle cx="27.5" cy="9" r="2" fill="black"/>
+  <rect x="5" y="20" width="7.5" height="15" fill="#FFE4B5" rx="3"/>
+  <rect x="37.5" y="20" width="7.5" height="15" fill="#FFE4B5" rx="3"/>
+  <rect x="15" y="37.5" width="7.5" height="10" fill="#4169E1" rx="3"/>
+  <rect x="27.5" y="37.5" width="7.5" height="10" fill="#4169E1" rx="3"/>
+
+  </g>
+  <text x="300" y="250" font-family="monospace" font-size="32" fill="#ffff00" fill-opacity="1">GAME COMPLETE!</text>
+  <text x="320" y="300" font-family="monospace" font-size="24" fill="#ffffff" fill-opacity="1">Final Score: 0</text>
+  <text x="320" y="330" font-family="monospace" font-size="20" fill="#ffffff" fill-opacity="1">Total Moves: 1</text>
+</svg>
+<p>Frame rendered with 4 draw calls.</p>
+</body>
+</html>

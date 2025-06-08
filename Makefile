@@ -12,7 +12,7 @@ SOURCES = Vector2D.cpp graphics.cpp GameEnvironment.cpp GameObject.cpp
 OBJECTS = $(SOURCES:%.cpp=$(OBJDIR)/%.o)
 
 # Executables
-TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics
+TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics $(BINDIR)/game_walkable_simple
 
 # Default target
 all: directories $(TARGETS)
@@ -27,6 +27,10 @@ $(BINDIR)/game_engine_parallel_demo: main.cpp
 
 # Simple game engine with SVG graphics
 $(BINDIR)/game_engine_simple_graphics: main_simple_graphics.cpp $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
+
+# Walkable game with player controls
+$(BINDIR)/game_walkable_simple: main_walkable_simple.cpp $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
 
 # Object files
