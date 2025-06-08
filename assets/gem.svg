@@ -1,0 +1,5 @@
+<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="10,2 16,8 14,18 6,18 4,8" fill="#0066FF" stroke="#0044CC" stroke-width="1"/>
+  <!-- Gem highlight -->
+  <polygon points="10,2 12,6 8,6" fill="white" opacity="0.6"/>
+</svg>

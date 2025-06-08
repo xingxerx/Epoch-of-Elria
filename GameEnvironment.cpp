@@ -237,21 +237,21 @@ void GameEnvironment::CreateLevel1Platforms() {
 }
 
 ParticleSystem* GameEnvironment::CreateParticleSystem(const Vector2D& position, int maxParticles) {
-    auto system = std::make_unique<ParticleSystem>(position, maxParticles);
+    std::unique_ptr<ParticleSystem> system(new ParticleSystem(position, maxParticles));
     ParticleSystem* ptr = system.get();
     particleSystems.push_back(std::move(system));
     return ptr;
 }
 
 void GameEnvironment::CreateCollectionEffect(const Vector2D& position) {
-    auto system = CreateParticleSystem(position, 20);
+    ParticleSystem* system = CreateParticleSystem(position, 20);
     if (system) {
         system->EmitBurst(15, Vector2D(0, -50), Color::YELLOW, 1.0, 30.0);
     }
 }
 
 void GameEnvironment::CreateExplosionEffect(const Vector2D& position) {
-    auto system = CreateParticleSystem(position, 50);
+    ParticleSystem* system = CreateParticleSystem(position, 50);
     if (system) {
         system->EmitBurst(30, Vector2D(0, -100), Color::ORANGE, 1.5, 80.0);
         system->EmitBurst(20, Vector2D(0, -80), Color::RED, 1.2, 60.0);

@@ -1,0 +1,58 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#E0F6FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#90EE90;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky background -->
+  <rect width="100%" height="100%" fill="url(#skyGradient)" />
+  
+  <!-- Clouds -->
+  <ellipse cx="150" cy="100" rx="40" ry="25" fill="white" opacity="0.8"/>
+  <ellipse cx="170" cy="90" rx="50" ry="30" fill="white" opacity="0.8"/>
+  <ellipse cx="190" cy="100" rx="35" ry="20" fill="white" opacity="0.8"/>
+  
+  <ellipse cx="450" cy="80" rx="45" ry="28" fill="white" opacity="0.7"/>
+  <ellipse cx="470" cy="70" rx="55" ry="35" fill="white" opacity="0.7"/>
+  <ellipse cx="490" cy="80" rx="40" ry="25" fill="white" opacity="0.7"/>
+  
+  <ellipse cx="650" cy="120" rx="35" ry="20" fill="white" opacity="0.6"/>
+  <ellipse cx="670" cy="110" rx="45" ry="25" fill="white" opacity="0.6"/>
+  <ellipse cx="690" cy="120" rx="30" ry="18" fill="white" opacity="0.6"/>
+  
+  <!-- Mountains in background -->
+  <polygon points="0,400 200,200 400,350 600,180 800,300 800,600 0,600" fill="#8B7355" opacity="0.6"/>
+  <polygon points="100,450 300,250 500,400 700,220 800,350 800,600 0,600" fill="#A0522D" opacity="0.4"/>
+  
+  <!-- Trees -->
+  <g transform="translate(100,450)">
+    <rect x="15" y="30" width="10" height="40" fill="#8B4513"/>
+    <circle cx="20" cy="25" r="20" fill="#228B22"/>
+  </g>
+  
+  <g transform="translate(300,480)">
+    <rect x="12" y="25" width="8" height="35" fill="#8B4513"/>
+    <circle cx="16" cy="20" r="15" fill="#32CD32"/>
+  </g>
+  
+  <g transform="translate(500,460)">
+    <rect x="18" y="35" width="12" height="45" fill="#8B4513"/>
+    <circle cx="24" cy="30" r="25" fill="#228B22"/>
+  </g>
+  
+  <!-- Ground details -->
+  <rect x="0" y="580" width="800" height="20" fill="#8FBC8F"/>
+  
+  <!-- Grass details -->
+  <path d="M50,580 Q52,575 54,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M150,580 Q152,574 154,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M250,580 Q252,576 254,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M350,580 Q352,573 354,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M450,580 Q452,575 454,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M550,580 Q552,574 554,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M650,580 Q652,576 654,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+  <path d="M750,580 Q752,573 754,580" stroke="#6B8E23" stroke-width="2" fill="none"/>
+</svg>

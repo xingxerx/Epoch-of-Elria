@@ -33,6 +33,16 @@ public:
         return Vector2D(x * scalar, y * scalar);
     }
 
+    // Overload the * operator for component-wise multiplication
+    Vector2D operator*(const Vector2D& other) const {
+        return Vector2D(x * other.x, y * other.y);
+    }
+
+    // Unary minus operator
+    Vector2D operator-() const {
+        return Vector2D(-x, -y);
+    }
+
     // Overload the / operator for scalar division
     Vector2D operator/(double scalar) const {
         if (scalar != 0) {
