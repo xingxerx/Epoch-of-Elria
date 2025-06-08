@@ -8,11 +8,15 @@ OBJDIR = obj
 BINDIR = bin
 
 # Source files
-SOURCES = Vector2D.cpp graphics.cpp GameEnvironment.cpp GameObject.cpp
+SOURCES = Vector2D.cpp graphics.cpp GameEnvironment.cpp GameObject.cpp GameObject3D.cpp
 OBJECTS = $(SOURCES:%.cpp=$(OBJDIR)/%.o)
 
+# 3D Game sources
+SOURCES_3D = GameObject3D.cpp
+OBJECTS_3D = $(SOURCES_3D:%.cpp=$(OBJDIR)/%.o)
+
 # Executables
-TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics $(BINDIR)/game_walkable_simple
+TARGETS = $(BINDIR)/game_engine_parallel_demo $(BINDIR)/game_engine_simple_graphics $(BINDIR)/game_walkable_simple $(BINDIR)/game_3d_openworld
 
 # Default target
 all: directories $(TARGETS)
@@ -33,6 +37,10 @@ $(BINDIR)/game_engine_simple_graphics: main_simple_graphics.cpp $(OBJDIR)/Vector
 $(BINDIR)/game_walkable_simple: main_walkable_simple.cpp $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJDIR)/Vector2D.o $(OBJDIR)/graphics.o
 
+# 3D Open World game
+$(BINDIR)/game_3d_openworld: main_3d_openworld.cpp $(OBJDIR)/GameObject3D.o
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(OBJDIR)/GameObject3D.o
+
 # Object files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
@@ -52,6 +60,10 @@ run-original: $(BINDIR)/game_engine_parallel_demo
 # Run the simple graphics game
 run-simple: $(BINDIR)/game_engine_simple_graphics
 	./$(BINDIR)/game_engine_simple_graphics
+
+# Run the 3D open world game
+run-3d: $(BINDIR)/game_3d_openworld
+	./$(BINDIR)/game_3d_openworld
 
 # Create sample assets
 assets: directories
