@@ -2,7 +2,7 @@
 name = "epoch_of_elria"
 version = "0.1.0"
 edition = "2021"
-authors = ["xingxerx <xingxerx>"]
+authors = ["xingxerx <xingxerx@gmail.com>"]
 description = "A simple 2D game engine ported from C++ to Rust"
 license = "MIT"
 
