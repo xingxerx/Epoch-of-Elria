@@ -8,6 +8,8 @@
 #include <chrono>   // For simulating work (optional, but good for demoing multithreading)
 #include <cstdlib>  // For rand(), srand()
 #include <ctime>    // For time()
+#include <fstream>    // For file output
+#include <sstream>    // For string stream
 
 // --- 1. Vector2D Class ---
 // Represents a 2D point or vector in space.
@@ -136,11 +138,10 @@ public:
         GameObject::Update(deltaTime); // Call base class Update for generic movement
     }
 
-    void Draw() const override {
-        std::cout << "PLAYER at ";
-        position.print(); // Print the player's current position
-        std::cout << std::endl; // Ensure player status is on its own line
-        // Add player-specific drawing logic here
+    void Draw(std::ofstream& svg) const override {
+        svg << "<rect x=\"" << position.x << "\" y=\"" << position.y
+            << "\" width=\"" << width << "\" height=\"" << height
+            << "\" fill=\"blue\"/>\n";
     }
 };
 
@@ -178,11 +179,11 @@ public:
         GameObject::Update(deltaTime);
     }
 
-    void Draw() const override {
-        if (!isCollected()) { // Use getter for collected status
-            // std::cout << "COLLECTIBLE (value: " << value << ") at "; // Commented to reduce excessive output
-            // position.print();
-            // std::cout << std::endl;
+    void Draw(std::ofstream& svg) const override {
+        if (!isCollected()) {
+            svg << "<rect x=\"" << position.x << "\" y=\"" << position.y
+                << "\" width=\"" << width << "\" height=\"" << height
+                << "\" fill=\"gold\"/>\n";
         }
     }
 };
@@ -198,6 +199,17 @@ void UpdateCollectiblesRange(std::vector<Collectible*>& collectibles, size_t sta
 }
 
 // --- Main Game Simulation Loop ---
+// SVG helper functions
+void startSVGFile(std::ofstream& file, int width = 800, int height = 400) {
+    file << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+         << "<svg width=\"" << width << "\" height=\"" << height
+         << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+}
+
+void endSVGFile(std::ofstream& file) {
+    file << "</svg>\n";
+}
+
 void RunGameSimulation() {
     std::cout << "\n--- Starting C++ Game Simulation (with Parallel Collectible Updates) ---" << std::endl;
 
@@ -275,11 +287,20 @@ void RunGameSimulation() {
             }
         }
 
-        // 4. Draw all game objects (simulated by console output, but actual drawing would follow)
-        // We can draw sequentially or also parallelize drawing calls (if graphics API supports it)
+        // 4. Draw all game objects to SVG file
+        std::stringstream filename;
+        filename << "game_frame_" << frame << ".svg";
+        std::ofstream svgFile(filename.str());
+        startSVGFile(svgFile);
+
+        // Draw all objects
+        player.Draw(svgFile);
         for (Collectible* collect : collectibles) {
-            collect->Draw();
+            collect->Draw(svgFile);
         }
+
+        endSVGFile(svgFile);
+        svgFile.close();
     }
 
     std::cout << "\n--- End of C++ Game Simulation ---" << std::endl;
