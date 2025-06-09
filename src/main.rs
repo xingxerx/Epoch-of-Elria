@@ -9,6 +9,7 @@ struct Vector2D {
 }
 
 impl Vector2D {
+    #[allow(dead_code)]
     fn new(x: f32, y: f32) -> Self {
         Vector2D { x, y }
     }
@@ -110,27 +111,33 @@ impl GameObject for Player {
 fn main() {
     println!("Epoch of Elria game engine (Rust) starting up!");
 
-    // Create a player at position (0, 0)
-    let mut player = Player::new(Vector2D::new(0.0, 0.0));
+    // Create two players at different positions
+    let mut player1 = Player::new(Vector2D::new(0.0, 0.0));
+    let mut player2 = Player {
+        position: Vector2D::new(100.0, 0.0),
+        velocity: Vector2D::new(-2.0, 0.0),
+        width: 40.0,
+        height: 40.0,
+    };
 
     // Simple game loop (10 frames for demonstration)
     for frame in 0..10 {
         println!("Frame {}", frame);
-        player.update();
+        player1.update();
+        player2.update();
 
         // Draw to SVG string (for demonstration)
         let mut svg = String::from(
             r#"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">"#,
         );
-        player.draw(&mut svg);
+        player1.draw(&mut svg);
+        player2.draw(&mut svg);
         svg.push_str("</svg>");
 
         println!("{}", svg);
 
-        print!("> ");
-        io::stdout().flush().unwrap();
-        let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
-        println!("You entered: {}", input.trim());
+        // Check for collision
+        let collision = player1.collides_with(&player2);
+        println!("Collision: {}", collision);
     }
 }
