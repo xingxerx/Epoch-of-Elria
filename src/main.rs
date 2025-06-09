@@ -39,9 +39,14 @@ impl Sub for Vector2D {
     }
 }
 
-impl Mul<f32> for Vector2D {
+impl Mul<f32> for2D {
     type Output = Self;
     fn mul(self, scalar: f32) -> Self {
         Vector2D { x: self.x * scalar, y: self.y * scalar }
     }
+}
+
+// Add a main function so the project can build and run
+fn main() {
+    println!("Epoch of Elria game engine (Rust) starting up!");
 }

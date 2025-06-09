@@ -3,7 +3,7 @@ name = "epoch_of_elria"
 version = "0.1.0"
 edition = "2021"
 authors = ["xingxerx <xingxerx@gmail.com>"]
-description = "A simple 2D game engine ported from C++ to Rust"
+description = "A simple 3D game engine ported from C++ to Rust"
 license = "MIT"
 
 [dependencies]
