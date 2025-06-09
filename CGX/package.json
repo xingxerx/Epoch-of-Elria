@@ -14,9 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.7.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
     "express": "^4.21.2",
-    "zod": "^3.24.2"
+    "zod": "^3.25.56"
   },
   "devDependencies": {
     "@modelcontextprotocol/inspector": "0.6.0",
