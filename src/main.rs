@@ -46,6 +46,90 @@ impl Mul<f32> for Vector2D {
     }
 }
 
+use std::fmt::Write as FmtWrite;
+use std::io::{self, Write};
+
+trait GameObject {
+    fn update(&mut self);
+    fn draw(&self, svg: &mut String);
+    fn get_position(&self) -> Vector2D;
+    fn get_size(&self) -> (f32, f32);
+
+    fn collides_with(&self, other: &dyn GameObject) -> bool {
+        let (x1, y1) = (self.get_position().x, self.get_position().y);
+        let (w1, h1) = self.get_size();
+        let (x2, y2) = (other.get_position().x, other.get_position().y);
+        let (w2, h2) = other.get_size();
+
+        x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2
+    }
+}
+
+struct Player {
+    position: Vector2D,
+    velocity: Vector2D,
+    width: f32,
+    height: f32,
+}
+
+impl Player {
+    fn new(position: Vector2D) -> Self {
+        Player {
+            position,
+            velocity: Vector2D::new(2.0, 0.0),
+            width: 40.0,
+            height: 40.0,
+        }
+    }
+}
+
+impl GameObject for Player {
+    fn update(&mut self) {
+        self.position = self.position + self.velocity;
+    }
+
+    fn draw(&self, svg: &mut String) {
+        let _ = write!(
+            svg,
+            r#"<rect x="{}" y="{}" width="{}" height="{}" fill="blue" />"#,
+            self.position.x, self.position.y, self.width, self.height
+        );
+    }
+
+    fn get_position(&self) -> Vector2D {
+        self.position
+    }
+
+    fn get_size(&self) -> (f32, f32) {
+        (self.width, self.height)
+    }
+}
+
+fn main() {
+    println!("Epoch of Elria game engine (Rust) starting up!");
+
+    let mut player = Player::new(Vector2D::new(0.0, 0.0));
+
+    for frame in 0..10 {
+        println!("Frame {}", frame);
+        player.update();
+
+        let mut svg = String::from(
+            r#"<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">"#,
+        );
+        player.draw(&mut svg);
+        svg.push_str("</svg>");
+
+        println!("{}", svg);
+
+        print!("> ");
+        io::stdout().flush().unwrap();
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+        println!("You entered: {}", input.trim());
+    }
+}
+
 use std::fmt::Write as FmtWrite; // For SVG string building
 use std::io::{self, Write};
 
