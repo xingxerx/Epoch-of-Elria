@@ -1,5 +1,6 @@
 use std::ops::{Add, Sub, Mul};
-use std::io::{self, Write};
+use std::io::{self, Write as IoWrite};
+use std::fmt::Write as FmtWrite;
 
 #[derive(Clone, Copy, Debug)]
 struct Vector2D {
@@ -10,6 +11,19 @@ struct Vector2D {
 impl Vector2D {
     fn new(x: f32, y: f32) -> Self {
         Vector2D { x, y }
+    }
+
+    fn magnitude(&self) -> f32 {
+        (self.x * self.x + self.y * self.y).sqrt()
+    }
+
+    fn normalize(&self) -> Self {
+        let mag = self.magnitude();
+        if mag == 0.0 {
+            Vector2D { x: 0.0, y: 0.0 }
+        } else {
+            Vector2D { x: self.x / mag, y: self.y / mag }
+        }
     }
 }
 
@@ -27,7 +41,7 @@ impl Sub for Vector2D {
     }
 }
 
-impl Mul<f32> for2D {
+impl Mul<f32> for Vector2D {
     type Output = Self;
     fn mul(self, scalar: f32) -> Self {
         Vector2D { x: self.x * scalar, y: self.y * scalar }
@@ -47,7 +61,7 @@ trait GameObject {
         let (x2, y2) = (other.get_position().x, other.get_position().y);
         let (w2, h2) = other.get_size();
 
-        x1 < x2 + w && x1 + w1 > x2 && y1 < y2 + h && y1 + h1 > y2
+        x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2
     }
 }
 
@@ -75,10 +89,12 @@ impl GameObject for Player {
     }
 
     fn draw(&self, svg: &mut String) {
-        let _ = write!(
+        let _ = FmtWrite::write_fmt(
             svg,
-            r#"<rect x{}" y="{}" width="{}" height="{}" fill="blue" />"#,
-            self.position.x, self.position.y, self.width, self.height
+            format_args!(
+                r#"<rect x="{}" y="{}" width="{}" height="{}" fill="blue" />"#,
+                self.position.x, self.position.y, self.width, self.height
+            ),
         );
     }
 
@@ -104,12 +120,12 @@ fn main() {
 
         // Draw to SVG string (for demonstration)
         let mut svg = String::from(
-            r#"<svg xmlnshttp://www.w3.org/2000/svg" width="800" height="600">"#,
+            r#"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">"#,
         );
         player.draw(&mut svg);
         svg.push_str("</svg>");
 
- println!("{}", svg);
+        println!("{}", svg);
 
         print!("> ");
         io::stdout().flush().unwrap();
