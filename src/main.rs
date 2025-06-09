@@ -113,9 +113,9 @@ fn main() {
     println!("Epoch of Elria game engine (Rust) starting up!");
 
     // Create two players at different positions
-    let mut player3 = Player::new(Vector2D::new(200.0, 0.0), Vector2D::new(0.0, 2.0));
-    let mut player1 = Player::new(Vector2D::new(0.0, 0.0));
-    let mut player2 = Player {
+    let mut player1 = Player::new(Vector2D::new(200.0, 0.0));
+    let mut player2 = Player::new(Vector2D::new(0.0, 0.0));
+    let mut player3 = Player {
         position: Vector2D::new(100.0, 0.0),
         velocity: Vector2D::new(-2.0, 0.0),
         width: 40.0,
