@@ -39,7 +39,7 @@ impl Sub for Vector2D {
     }
 }
 
-impl Mul<f32> for2D {
+impl Mul<f32> for Vector2D {
     type Output = Self;
     fn mul(self, scalar: f32) -> Self {
         Vector2D { x: self.x * scalar, y: self.y * scalar }
