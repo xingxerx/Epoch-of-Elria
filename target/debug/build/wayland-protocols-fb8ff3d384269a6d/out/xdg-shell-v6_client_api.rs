@@ -2055,4 +2055,462 @@ pub mod zxdg_toplevel_v6 {
         [unsafe { &super::zxdg_toplevel_v6::zxdg_toplevel_v6_interface as *const wl_interface }];
     static mut zxdg_toplevel_v6_requests_show_window_menu_types: [*const wl_interface; 4] = [
         unsafe { &super::wl_seat::wl_seat_interface as *const wl_interface },
-    
+        NULLPTR as *const wl_interface,
+        NULLPTR as *const wl_interface,
+        NULLPTR as *const wl_interface,
+    ];
+    static mut zxdg_toplevel_v6_requests_move_types: [*const wl_interface; 2] = [
+        unsafe { &super::wl_seat::wl_seat_interface as *const wl_interface },
+        NULLPTR as *const wl_interface,
+    ];
+    static mut zxdg_toplevel_v6_requests_resize_types: [*const wl_interface; 3] = [
+        unsafe { &super::wl_seat::wl_seat_interface as *const wl_interface },
+        NULLPTR as *const wl_interface,
+        NULLPTR as *const wl_interface,
+    ];
+    static mut zxdg_toplevel_v6_requests_set_fullscreen_types: [*const wl_interface; 1] =
+        [unsafe { &super::wl_output::wl_output_interface as *const wl_interface }];
+    #[doc = r" C-representation of the messages of this interface, for interop"]
+    pub static mut zxdg_toplevel_v6_requests: [wl_message; 14] = [
+        wl_message {
+            name: b"destroy\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"set_parent\0" as *const u8 as *const c_char,
+            signature: b"?o\0" as *const u8 as *const c_char,
+            types: unsafe { &zxdg_toplevel_v6_requests_set_parent_types as *const _ },
+        },
+        wl_message {
+            name: b"set_title\0" as *const u8 as *const c_char,
+            signature: b"s\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"set_app_id\0" as *const u8 as *const c_char,
+            signature: b"s\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"show_window_menu\0" as *const u8 as *const c_char,
+            signature: b"ouii\0" as *const u8 as *const c_char,
+            types: unsafe { &zxdg_toplevel_v6_requests_show_window_menu_types as *const _ },
+        },
+        wl_message {
+            name: b"move\0" as *const u8 as *const c_char,
+            signature: b"ou\0" as *const u8 as *const c_char,
+            types: unsafe { &zxdg_toplevel_v6_requests_move_types as *const _ },
+        },
+        wl_message {
+            name: b"resize\0" as *const u8 as *const c_char,
+            signature: b"ouu\0" as *const u8 as *const c_char,
+            types: unsafe { &zxdg_toplevel_v6_requests_resize_types as *const _ },
+        },
+        wl_message {
+            name: b"set_max_size\0" as *const u8 as *const c_char,
+            signature: b"ii\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"set_min_size\0" as *const u8 as *const c_char,
+            signature: b"ii\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"set_maximized\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"unset_maximized\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"set_fullscreen\0" as *const u8 as *const c_char,
+            signature: b"?o\0" as *const u8 as *const c_char,
+            types: unsafe { &zxdg_toplevel_v6_requests_set_fullscreen_types as *const _ },
+        },
+        wl_message {
+            name: b"unset_fullscreen\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"set_minimized\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+    ];
+    #[doc = r" C-representation of the messages of this interface, for interop"]
+    pub static mut zxdg_toplevel_v6_events: [wl_message; 2] = [
+        wl_message {
+            name: b"configure\0" as *const u8 as *const c_char,
+            signature: b"iia\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"close\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+    ];
+    #[doc = r" C representation of this interface, for interop"]
+    pub static mut zxdg_toplevel_v6_interface: wl_interface = wl_interface {
+        name: b"zxdg_toplevel_v6\0" as *const u8 as *const c_char,
+        version: 1,
+        request_count: 14,
+        requests: unsafe { &zxdg_toplevel_v6_requests as *const _ },
+        event_count: 2,
+        events: unsafe { &zxdg_toplevel_v6_events as *const _ },
+    };
+}
+#[doc = "short-lived, popup surfaces for menus\n\nA popup surface is a short-lived, temporary surface. It can be used to\nimplement for example menus, popovers, tooltips and other similar user\ninterface concepts.\n\nA popup can be made to take an explicit grab. See xdg_popup.grab for\ndetails.\n\nWhen the popup is dismissed, a popup_done event will be sent out, and at\nthe same time the surface will be unmapped. See the xdg_popup.popup_done\nevent for details.\n\nExplicitly destroying the xdg_popup object will also dismiss the popup and\nunmap the surface. Clients that want to dismiss the popup when another\nsurface of their own is clicked should dismiss the popup using the destroy\nrequest.\n\nThe parent surface must have either the xdg_toplevel or xdg_popup surface\nrole.\n\nA newly created xdg_popup will be stacked on top of all previously created\nxdg_popup surfaces associated with the same xdg_toplevel.\n\nThe parent of an xdg_popup must be mapped (see the xdg_surface\ndescription) before the xdg_popup itself.\n\nThe x and y arguments passed when creating the popup object specify\nwhere the top left of the popup should be placed, relative to the\nlocal surface coordinates of the parent surface. See\nxdg_surface.get_popup. An xdg_popup must intersect with or be at least\npartially adjacent to its parent surface.\n\nThe client must call wl_surface.commit on the corresponding wl_surface\nfor the xdg_popup state to take effect."]
+pub mod zxdg_popup_v6 {
+    use super::sys::client::*;
+    use super::sys::common::{wl_argument, wl_array, wl_interface, wl_message};
+    use super::{
+        smallvec, types_null, AnonymousObject, Argument, ArgumentType, Interface, Main, Message,
+        MessageDesc, MessageGroup, Object, ObjectMetadata, Proxy, NULLPTR,
+    };
+    use std::os::raw::c_char;
+    #[repr(u32)]
+    #[derive(Copy, Clone, Debug, PartialEq)]
+    #[non_exhaustive]
+    pub enum Error {
+        #[doc = "tried to grab after being mapped"]
+        InvalidGrab = 0,
+    }
+    impl Error {
+        pub fn from_raw(n: u32) -> Option<Error> {
+            match n {
+                0 => Some(Error::InvalidGrab),
+                _ => Option::None,
+            }
+        }
+        pub fn to_raw(&self) -> u32 {
+            *self as u32
+        }
+    }
+    #[derive(Debug)]
+    #[non_exhaustive]
+    pub enum Request {
+        #[doc = "remove xdg_popup interface\n\nThis destroys the popup. Explicitly destroying the xdg_popup\nobject will also dismiss the popup, and unmap the surface.\n\nIf this xdg_popup is not the \"topmost\" popup, a protocol error\nwill be sent.\n\nThis is a destructor, once sent this object cannot be used any longer."]
+        Destroy,
+        #[doc = "make the popup take an explicit grab\n\nThis request makes the created popup take an explicit grab. An explicit\ngrab will be dismissed when the user dismisses the popup, or when the\nclient destroys the xdg_popup. This can be done by the user clicking\noutside the surface, using the keyboard, or even locking the screen\nthrough closing the lid or a timeout.\n\nIf the compositor denies the grab, the popup will be immediately\ndismissed.\n\nThis request must be used in response to some sort of user action like a\nbutton press, key press, or touch down event. The serial number of the\nevent should be passed as 'serial'.\n\nThe parent of a grabbing popup must either be an xdg_toplevel surface or\nanother xdg_popup with an explicit grab. If the parent is another\nxdg_popup it means that the popups are nested, with this popup now being\nthe topmost popup.\n\nNested popups must be destroyed in the reverse order they were created\nin, e.g. the only popup you are allowed to destroy at all times is the\ntopmost one.\n\nWhen compositors choose to dismiss a popup, they may dismiss every\nnested grabbing popup as well. When a compositor dismisses popups, it\nwill follow the same dismissing order as required from the client.\n\nThe parent of a grabbing popup must either be another xdg_popup with an\nactive explicit grab, or an xdg_popup or xdg_toplevel, if there are no\nexplicit grabs already taken.\n\nIf the topmost grabbing popup is destroyed, the grab will be returned to\nthe parent of the popup, if that parent previously had an explicit grab.\n\nIf the parent is a grabbing popup which has already been dismissed, this\npopup will be immediately dismissed. If the parent is a popup that did\nnot take an explicit grab, an error will be raised.\n\nDuring a popup grab, the client owning the grab will receive pointer\nand touch events for all their surfaces as normal (similar to an\n\"owner-events\" grab in X11 parlance), while the top most grabbing popup\nwill always have keyboard focus."]
+        Grab {
+            seat: super::wl_seat::WlSeat,
+            serial: u32,
+        },
+    }
+    impl super::MessageGroup for Request {
+        const MESSAGES: &'static [super::MessageDesc] = &[
+            super::MessageDesc {
+                name: "destroy",
+                since: 1,
+                signature: &[],
+                destructor: true,
+            },
+            super::MessageDesc {
+                name: "grab",
+                since: 1,
+                signature: &[super::ArgumentType::Object, super::ArgumentType::Uint],
+                destructor: false,
+            },
+        ];
+        type Map = super::ProxyMap;
+        fn is_destructor(&self) -> bool {
+            match *self {
+                Request::Destroy => true,
+                _ => false,
+            }
+        }
+        fn opcode(&self) -> u16 {
+            match *self {
+                Request::Destroy => 0,
+                Request::Grab { .. } => 1,
+            }
+        }
+        fn since(&self) -> u32 {
+            match *self {
+                Request::Destroy => 1,
+                Request::Grab { .. } => 1,
+            }
+        }
+        fn child<Meta: ObjectMetadata>(
+            opcode: u16,
+            version: u32,
+            meta: &Meta,
+        ) -> Option<Object<Meta>> {
+            match opcode {
+                _ => None,
+            }
+        }
+        fn from_raw(msg: Message, map: &mut Self::Map) -> Result<Self, ()> {
+            panic!("Request::from_raw can not be used Client-side.")
+        }
+        fn into_raw(self, sender_id: u32) -> Message {
+            match self {
+                Request::Destroy => Message {
+                    sender_id: sender_id,
+                    opcode: 0,
+                    args: smallvec![],
+                },
+                Request::Grab { seat, serial } => Message {
+                    sender_id: sender_id,
+                    opcode: 1,
+                    args: smallvec![Argument::Object(seat.as_ref().id()), Argument::Uint(serial),],
+                },
+            }
+        }
+        unsafe fn from_raw_c(
+            obj: *mut ::std::os::raw::c_void,
+            opcode: u32,
+            args: *const wl_argument,
+        ) -> Result<Request, ()> {
+            panic!("Request::from_raw_c can not be used Client-side.")
+        }
+        fn as_raw_c_in<F, T>(self, f: F) -> T
+        where
+            F: FnOnce(u32, &mut [wl_argument]) -> T,
+        {
+            match self {
+                Request::Destroy => {
+                    let mut _args_array: [wl_argument; 0] = unsafe { ::std::mem::zeroed() };
+                    f(0, &mut _args_array)
+                }
+                Request::Grab { seat, serial } => {
+                    let mut _args_array: [wl_argument; 2] = unsafe { ::std::mem::zeroed() };
+                    _args_array[0].o = seat.as_ref().c_ptr() as *mut _;
+                    _args_array[1].u = serial;
+                    f(1, &mut _args_array)
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    #[non_exhaustive]
+    pub enum Event {
+        #[doc = "configure the popup surface\n\nThis event asks the popup surface to configure itself given the\nconfiguration. The configured state should not be applied immediately.\nSee xdg_surface.configure for details.\n\nThe x and y arguments represent the position the popup was placed at\ngiven the xdg_positioner rule, relative to the upper left corner of the\nwindow geometry of the parent surface."]
+        Configure {
+            x: i32,
+            y: i32,
+            width: i32,
+            height: i32,
+        },
+        #[doc = "popup interaction is done\n\nThe popup_done event is sent out when a popup is dismissed by the\ncompositor. The client should destroy the xdg_popup object at this\npoint."]
+        PopupDone,
+    }
+    impl super::MessageGroup for Event {
+        const MESSAGES: &'static [super::MessageDesc] = &[
+            super::MessageDesc {
+                name: "configure",
+                since: 1,
+                signature: &[
+                    super::ArgumentType::Int,
+                    super::ArgumentType::Int,
+                    super::ArgumentType::Int,
+                    super::ArgumentType::Int,
+                ],
+                destructor: false,
+            },
+            super::MessageDesc {
+                name: "popup_done",
+                since: 1,
+                signature: &[],
+                destructor: false,
+            },
+        ];
+        type Map = super::ProxyMap;
+        fn is_destructor(&self) -> bool {
+            match *self {
+                _ => false,
+            }
+        }
+        fn opcode(&self) -> u16 {
+            match *self {
+                Event::Configure { .. } => 0,
+                Event::PopupDone => 1,
+            }
+        }
+        fn since(&self) -> u32 {
+            match *self {
+                Event::Configure { .. } => 1,
+                Event::PopupDone => 1,
+            }
+        }
+        fn child<Meta: ObjectMetadata>(
+            opcode: u16,
+            version: u32,
+            meta: &Meta,
+        ) -> Option<Object<Meta>> {
+            match opcode {
+                _ => None,
+            }
+        }
+        fn from_raw(msg: Message, map: &mut Self::Map) -> Result<Self, ()> {
+            match msg.opcode {
+                0 => {
+                    let mut args = msg.args.into_iter();
+                    Ok(Event::Configure {
+                        x: {
+                            if let Some(Argument::Int(val)) = args.next() {
+                                val
+                            } else {
+                                return Err(());
+                            }
+                        },
+                        y: {
+                            if let Some(Argument::Int(val)) = args.next() {
+                                val
+                            } else {
+                                return Err(());
+                            }
+                        },
+                        width: {
+                            if let Some(Argument::Int(val)) = args.next() {
+                                val
+                            } else {
+                                return Err(());
+                            }
+                        },
+                        height: {
+                            if let Some(Argument::Int(val)) = args.next() {
+                                val
+                            } else {
+                                return Err(());
+                            }
+                        },
+                    })
+                }
+                1 => Ok(Event::PopupDone),
+                _ => Err(()),
+            }
+        }
+        fn into_raw(self, sender_id: u32) -> Message {
+            panic!("Event::into_raw can not be used Client-side.")
+        }
+        unsafe fn from_raw_c(
+            obj: *mut ::std::os::raw::c_void,
+            opcode: u32,
+            args: *const wl_argument,
+        ) -> Result<Event, ()> {
+            match opcode {
+                0 => {
+                    let _args = ::std::slice::from_raw_parts(args, 4);
+                    Ok(Event::Configure {
+                        x: _args[0].i,
+                        y: _args[1].i,
+                        width: _args[2].i,
+                        height: _args[3].i,
+                    })
+                }
+                1 => Ok(Event::PopupDone),
+                _ => return Err(()),
+            }
+        }
+        fn as_raw_c_in<F, T>(self, f: F) -> T
+        where
+            F: FnOnce(u32, &mut [wl_argument]) -> T,
+        {
+            panic!("Event::as_raw_c_in can not be used Client-side.")
+        }
+    }
+    #[derive(Clone, Eq, PartialEq)]
+    pub struct ZxdgPopupV6(Proxy<ZxdgPopupV6>);
+    impl AsRef<Proxy<ZxdgPopupV6>> for ZxdgPopupV6 {
+        #[inline]
+        fn as_ref(&self) -> &Proxy<Self> {
+            &self.0
+        }
+    }
+    impl From<Proxy<ZxdgPopupV6>> for ZxdgPopupV6 {
+        #[inline]
+        fn from(value: Proxy<Self>) -> Self {
+            ZxdgPopupV6(value)
+        }
+    }
+    impl From<ZxdgPopupV6> for Proxy<ZxdgPopupV6> {
+        #[inline]
+        fn from(value: ZxdgPopupV6) -> Self {
+            value.0
+        }
+    }
+    impl std::fmt::Debug for ZxdgPopupV6 {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_fmt(format_args!("{:?}", self.0))
+        }
+    }
+    impl Interface for ZxdgPopupV6 {
+        type Request = Request;
+        type Event = Event;
+        const NAME: &'static str = "zxdg_popup_v6";
+        const VERSION: u32 = 1;
+        fn c_interface() -> *const wl_interface {
+            unsafe { &zxdg_popup_v6_interface }
+        }
+    }
+    impl ZxdgPopupV6 {
+        #[doc = "remove xdg_popup interface\n\nThis destroys the popup. Explicitly destroying the xdg_popup\nobject will also dismiss the popup, and unmap the surface.\n\nIf this xdg_popup is not the \"topmost\" popup, a protocol error\nwill be sent.\n\nThis is a destructor, you cannot send requests to this object any longer once this method is called."]
+        pub fn destroy(&self) -> () {
+            let msg = Request::Destroy;
+            self.0.send::<AnonymousObject>(msg, None);
+        }
+        #[doc = "make the popup take an explicit grab\n\nThis request makes the created popup take an explicit grab. An explicit\ngrab will be dismissed when the user dismisses the popup, or when the\nclient destroys the xdg_popup. This can be done by the user clicking\noutside the surface, using the keyboard, or even locking the screen\nthrough closing the lid or a timeout.\n\nIf the compositor denies the grab, the popup will be immediately\ndismissed.\n\nThis request must be used in response to some sort of user action like a\nbutton press, key press, or touch down event. The serial number of the\nevent should be passed as 'serial'.\n\nThe parent of a grabbing popup must either be an xdg_toplevel surface or\nanother xdg_popup with an explicit grab. If the parent is another\nxdg_popup it means that the popups are nested, with this popup now being\nthe topmost popup.\n\nNested popups must be destroyed in the reverse order they were created\nin, e.g. the only popup you are allowed to destroy at all times is the\ntopmost one.\n\nWhen compositors choose to dismiss a popup, they may dismiss every\nnested grabbing popup as well. When a compositor dismisses popups, it\nwill follow the same dismissing order as required from the client.\n\nThe parent of a grabbing popup must either be another xdg_popup with an\nactive explicit grab, or an xdg_popup or xdg_toplevel, if there are no\nexplicit grabs already taken.\n\nIf the topmost grabbing popup is destroyed, the grab will be returned to\nthe parent of the popup, if that parent previously had an explicit grab.\n\nIf the parent is a grabbing popup which has already been dismissed, this\npopup will be immediately dismissed. If the parent is a popup that did\nnot take an explicit grab, an error will be raised.\n\nDuring a popup grab, the client owning the grab will receive pointer\nand touch events for all their surfaces as normal (similar to an\n\"owner-events\" grab in X11 parlance), while the top most grabbing popup\nwill always have keyboard focus."]
+        pub fn grab(&self, seat: &super::wl_seat::WlSeat, serial: u32) -> () {
+            let msg = Request::Grab {
+                seat: seat.clone(),
+                serial: serial,
+            };
+            self.0.send::<AnonymousObject>(msg, None);
+        }
+    }
+    #[doc = r" The minimal object version supporting this request"]
+    pub const REQ_DESTROY_SINCE: u32 = 1u32;
+    #[doc = r" The minimal object version supporting this request"]
+    pub const REQ_GRAB_SINCE: u32 = 1u32;
+    #[doc = r" The minimal object version supporting this event"]
+    pub const EVT_CONFIGURE_SINCE: u32 = 1u32;
+    #[doc = r" The minimal object version supporting this event"]
+    pub const EVT_POPUP_DONE_SINCE: u32 = 1u32;
+    static mut zxdg_popup_v6_requests_grab_types: [*const wl_interface; 2] = [
+        unsafe { &super::wl_seat::wl_seat_interface as *const wl_interface },
+        NULLPTR as *const wl_interface,
+    ];
+    #[doc = r" C-representation of the messages of this interface, for interop"]
+    pub static mut zxdg_popup_v6_requests: [wl_message; 2] = [
+        wl_message {
+            name: b"destroy\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"grab\0" as *const u8 as *const c_char,
+            signature: b"ou\0" as *const u8 as *const c_char,
+            types: unsafe { &zxdg_popup_v6_requests_grab_types as *const _ },
+        },
+    ];
+    #[doc = r" C-representation of the messages of this interface, for interop"]
+    pub static mut zxdg_popup_v6_events: [wl_message; 2] = [
+        wl_message {
+            name: b"configure\0" as *const u8 as *const c_char,
+            signature: b"iiii\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+        wl_message {
+            name: b"popup_done\0" as *const u8 as *const c_char,
+            signature: b"\0" as *const u8 as *const c_char,
+            types: unsafe { &types_null as *const _ },
+        },
+    ];
+    #[doc = r" C representation of this interface, for interop"]
+    pub static mut zxdg_popup_v6_interface: wl_interface = wl_interface {
+        name: b"zxdg_popup_v6\0" as *const u8 as *const c_char,
+        version: 1,
+        request_count: 2,
+        requests: unsafe { &zxdg_popup_v6_requests as *const _ },
+        event_count: 2,
+        events: unsafe { &zxdg_popup_v6_events as *const _ },
+    };
+}
