@@ -1,0 +1,9 @@
+[package]
+name = "epoch_of_elria"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <you@example>"]
+description = "A simple 2D game engine ported from C++ to Rust"
+license = "MIT"
+
+[dependencies]
