@@ -233,7 +233,7 @@ void RunGameSimulation() {
     if (num_threads == 0) num_threads = 1; // Fallback if hardware_concurrency returns 0
     std::cout << "Using " << num_threads << " threads for collectible updates." << std::endl;
 
-    double deltaTime = 1.0 / 60.0; // Simulate 60 frames per second
+    double deltaTime = 1.0 / 120.0; // Simulate 120 frames per second
     int totalScore = 0;
 
     // Simulate a few frames of the game

@@ -1,5 +1,5 @@
 use std::ops::{Add, Sub, Mul};
-use std::io::{self, Write as IoWrite};
+
 use std::fmt::Write as FmtWrite;
 
 #[derive(Clone, Copy, Debug)]
