@@ -122,11 +122,12 @@ fn main() {
         height: 40.0,
     };
 
-    // Simple game loop (10 frames for demonstration)
-    for frame in 0..10 {
+    // Game loop for 120 frames
+    for frame in 0..120 {
         println!("Frame {}", frame);
         player1.update();
         player2.update();
+        player3.update();
 
         // Draw to SVG string (for demonstration)
         let mut svg = String::from(
@@ -134,12 +135,18 @@ fn main() {
         );
         player1.draw(&mut svg);
         player2.draw(&mut svg);
+        player3.draw(&mut svg);
         svg.push_str("</svg>");
 
         println!("{}", svg);
 
-        // Check for collision
-        let collision = player1.collides_with(&player2);
-        println!("Collision: {}", collision);
+        // Check for collisions between all pairs
+        let collision_1_2 = player1.collides_with(&player2);
+        let collision_1_3 = player1.collides_with(&player3);
+        let collision_2_3 = player2.collides_with(&player3);
+        println!(
+            "Collisions: 1-2: {}, 1-3: {}, 2-3: {}",
+            collision_1_2, collision_1_3, collision_2_3
+        );
     }
 }
