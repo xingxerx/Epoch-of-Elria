@@ -8,6 +8,7 @@ struct Vector2D {
     y: f32,
 }
 
+#[allow(dead_code)]
 impl Vector2D {
     #[allow(dead_code)]
     fn new(x: f32, y: f32) -> Self {
@@ -112,6 +113,7 @@ fn main() {
     println!("Epoch of Elria game engine (Rust) starting up!");
 
     // Create two players at different positions
+    let mut player3 = Player::new(Vector2D::new(200.0, 0.0), Vector2D::new(0.0, 2.0));
     let mut player1 = Player::new(Vector2D::new(0.0, 0.0));
     let mut player2 = Player {
         position: Vector2D::new(100.0, 0.0),
