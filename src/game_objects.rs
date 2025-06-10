@@ -1,6 +1,6 @@
 // game_objects.rs - Game object implementations
 
-use crate::math::{Vector2D, Vector3D};
+use crate::math::Vector3D;
 use kiss3d::scene::SceneNode;
 use kiss3d::nalgebra::{Translation3, UnitQuaternion, Vector3};
 use std::sync::{Arc, Mutex};
@@ -17,6 +17,11 @@ pub trait GameObject {
     fn get_name(&self) -> &str;
     fn get_bounds(&self) -> BoundingBox;
     fn on_collision(&mut self, other: &dyn GameObject);
+    fn get_size(&self) -> Vector3D;
+    fn get_id(&self) -> usize;
+    fn set_id(&mut self, id: usize);
+    fn as_any(&self) -> &dyn std::any::Any;
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any;
 }
 
 // Bounding box for collision detection
@@ -63,6 +68,7 @@ impl BoundingBox {
 // Player implementation
 pub struct Player {
     name: String,
+    id: usize,
     position: Vector3D,
     velocity: Vector3D,
     acceleration: Vector3D,
@@ -77,9 +83,10 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(name: String, position: Vector3D) -> Self {
+    pub fn new(position: Vector3D) -> Self {
         Self {
-            name,
+            name: "Player".to_string(),
+            id: 0,
             position,
             velocity: Vector3D::zero(),
             acceleration: Vector3D::zero(),
@@ -211,11 +218,19 @@ impl GameObject for Player {
     fn on_collision(&mut self, _other: &dyn GameObject) {
         // Handle collision with other objects
     }
+    
+    fn get_size(&self) -> Vector3D { self.size }
+    fn get_id(&self) -> usize { self.id }
+    fn set_id(&mut self, id: usize) { self.id = id; }
+    
+    fn as_any(&self) -> &dyn std::any::Any { self }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any { self }
 }
 
 // Collectible implementation
 pub struct Collectible {
     name: String,
+    id: usize,
     position: Vector3D,
     velocity: Vector3D,
     value: i32,
@@ -239,9 +254,10 @@ pub enum CollectibleType {
 }
 
 impl Collectible {
-    pub fn new(name: String, position: Vector3D, value: i32, collectible_type: CollectibleType) -> Self {
+    pub fn new(position: Vector3D, value: i32, collectible_type: CollectibleType) -> Self {
         Self {
-            name,
+            name: "Collectible".to_string(),
+            id: 0,
             position,
             velocity: Vector3D::zero(),
             value,
@@ -351,11 +367,19 @@ impl GameObject for Collectible {
             self.collect();
         }
     }
+    
+    fn get_size(&self) -> Vector3D { self.size }
+    fn get_id(&self) -> usize { self.id }
+    fn set_id(&mut self, id: usize) { self.id = id; }
+    
+    fn as_any(&self) -> &dyn std::any::Any { self }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any { self }
 }
 
 // Enemy implementation
 pub struct Enemy {
     name: String,
+    id: usize,
     position: Vector3D,
     velocity: Vector3D,
     target_position: Option<Vector3D>,
@@ -385,9 +409,10 @@ pub enum EnemyAIState {
 }
 
 impl Enemy {
-    pub fn new(name: String, position: Vector3D) -> Self {
+    pub fn new(position: Vector3D) -> Self {
         Self {
-            name,
+            name: "Enemy".to_string(),
+            id: 0,
             position,
             velocity: Vector3D::zero(),
             target_position: None,
