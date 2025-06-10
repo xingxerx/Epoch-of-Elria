@@ -67,7 +67,7 @@ impl GameEngine {
         } else {
             None
         };
-        let scene = Scene::new();
+        let scene = Scene::new("Main Scene");
 
         Ok(Self {
             config,

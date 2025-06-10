@@ -1,0 +1,16 @@
+/mnt/f/Epoch of Elria/target/debug/deps/libwayland_client-db8d324d518b8dfa.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/display.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/event_queue.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/globals.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/proxy.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/mod.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/display.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/event_queue.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/proxy.rs /mnt/f/Epoch\ of\ Elria/target/debug/build/wayland-client-a506889ccb7c5cad/out/wayland_api.rs
+
+/mnt/f/Epoch of Elria/target/debug/deps/wayland_client-db8d324d518b8dfa.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/display.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/event_queue.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/globals.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/proxy.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/mod.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/display.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/event_queue.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/proxy.rs /mnt/f/Epoch\ of\ Elria/target/debug/build/wayland-client-a506889ccb7c5cad/out/wayland_api.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/display.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/event_queue.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/globals.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/proxy.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/mod.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/display.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/event_queue.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wayland-client-0.28.6/src/native_lib/proxy.rs:
+/mnt/f/Epoch\ of\ Elria/target/debug/build/wayland-client-a506889ccb7c5cad/out/wayland_api.rs:
+
+# env-dep:OUT_DIR=/mnt/f/Epoch of Elria/target/debug/build/wayland-client-a506889ccb7c5cad/out

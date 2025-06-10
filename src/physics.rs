@@ -297,8 +297,16 @@ impl PhysicsWorld {
             if direction.z != 0.0 { 1.0 / direction.z } else { f32::INFINITY },
         );
         
-        let t1 = (bounds.min - origin) * inv_dir;
-        let t2 = (bounds.max - origin) * inv_dir;
+        let t1 = Vector3D::new(
+            (bounds.min.x - origin.x) * inv_dir.x,
+            (bounds.min.y - origin.y) * inv_dir.y,
+            (bounds.min.z - origin.z) * inv_dir.z,
+        );
+        let t2 = Vector3D::new(
+            (bounds.max.x - origin.x) * inv_dir.x,
+            (bounds.max.y - origin.y) * inv_dir.y,
+            (bounds.max.z - origin.z) * inv_dir.z,
+        );
         
         let t_min = Vector3D::new(
             t1.x.min(t2.x),

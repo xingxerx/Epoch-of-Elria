@@ -4,7 +4,6 @@ use crate::math::Vector3D;
 use crate::game_objects::{GameObject, Player, Collectible, Enemy, Platform};
 use crate::physics::{PhysicsWorld, RigidBody};
 use std::collections::HashMap;
-use std::any::{Any, TypeId};
 
 pub struct Scene {
     name: String,
@@ -150,17 +149,17 @@ impl Scene {
     }
 
     pub fn add_collectible(&mut self, position: Vector3D, value: i32) -> usize {
-        let collectible = Box::new(Collectible::new(position, value));
+        let collectible = Box::new(Collectible::new(position, value, crate::game_objects::CollectibleType::Coin));
         self.add_object(collectible)
     }
 
-    pub fn add_enemy(&mut self, position: Vector3D, health: i32) -> usize {
-        let enemy = Box::new(Enemy::new(position, health));
+    pub fn add_enemy(&mut self, position: Vector3D) -> usize {
+        let enemy = Box::new(Enemy::new(position));
         self.add_object(enemy)
     }
 
-    pub fn add_platform(&mut self, position: Vector3D, size: Vector3D) -> usize {
-        let platform = Box::new(Platform::new(position, size));
+    pub fn add_platform(&mut self, size: Vector3D, position: Vector3D) -> usize {
+        let platform = Box::new(Platform::new(size, position, crate::game_objects::PlatformType::Solid));
         self.add_static_object(platform)
     }
 

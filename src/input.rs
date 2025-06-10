@@ -129,9 +129,8 @@ impl InputManager {
                             }
                             self.keys_pressed.remove(&mapped_key);
                         },
-                        kiss3d::event::Action::Repeat => {
-                            // Handle key repeat if needed
-                        },
+                        // Note: kiss3d may not have a Repeat variant
+                        // Remove this if it doesn't exist in the version being used
                     }
                 },
                 kiss3d::event::WindowEvent::MouseButton(button, action, _) => {
@@ -169,7 +168,7 @@ impl InputManager {
                         _ => {},
                     }
                 },
-                kiss3d::event::WindowEvent::CursorPos(x, y) => {
+                kiss3d::event::WindowEvent::CursorPos(x, y, _) => {
                     let new_position = (x as f32, y as f32);
                     self.mouse_state.delta = (
                         new_position.0 - self.previous_mouse_position.0,
@@ -178,7 +177,7 @@ impl InputManager {
                     self.mouse_state.position = new_position;
                     self.previous_mouse_position = new_position;
                 },
-                kiss3d::event::WindowEvent::Scroll(_, y) => {
+                kiss3d::event::WindowEvent::Scroll(_, y, _) => {
                     self.mouse_state.wheel_delta = y as f32;
                 },
                 _ => {},
@@ -394,10 +393,10 @@ impl InputManager {
             kiss3d::event::Key::F12 => Key::F12,
             
             kiss3d::event::Key::Space => Key::Space,
-            kiss3d::event::Key::Enter => Key::Enter,
+            kiss3d::event::Key::Return => Key::Enter,
             kiss3d::event::Key::Escape => Key::Escape,
             kiss3d::event::Key::Tab => Key::Tab,
-            kiss3d::event::Key::Backspace => Key::Backspace,
+            kiss3d::event::Key::Back => Key::Backspace,
             kiss3d::event::Key::Delete => Key::Delete,
             kiss3d::event::Key::Insert => Key::Insert,
             kiss3d::event::Key::Home => Key::Home,

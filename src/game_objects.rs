@@ -593,11 +593,20 @@ impl GameObject for Enemy {
             // Player collision handled in game logic
         }
     }
+    
+    fn get_size(&self) -> Vector3D { self.size }
+    fn get_id(&self) -> usize { self.id }
+    fn set_id(&mut self, id: usize) { self.id = id; }
+    
+    fn as_any(&self) -> &dyn std::any::Any { self }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any { self }
 }
 
 // Platform implementation for platformer games
 pub struct Platform {
     name: String,
+    id: usize,
+    id: usize,
     position: Vector3D,
     size: Vector3D,
     active: bool,
@@ -614,9 +623,10 @@ pub enum PlatformType {
 }
 
 impl Platform {
-    pub fn new(name: String, position: Vector3D, size: Vector3D, platform_type: PlatformType) -> Self {
+    pub fn new(size: Vector3D, position: Vector3D, platform_type: PlatformType) -> Self {
         Self {
-            name,
+            name: "Platform".to_string(),
+            id: 0,
             position,
             size,
             active: true,
@@ -668,4 +678,11 @@ impl GameObject for Platform {
     fn on_collision(&mut self, _other: &dyn GameObject) {
         // Handle collision with other objects
     }
+    
+    fn get_size(&self) -> Vector3D { self.size }
+    fn get_id(&self) -> usize { self.id }
+    fn set_id(&mut self, id: usize) { self.id = id; }
+    
+    fn as_any(&self) -> &dyn std::any::Any { self }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any { self }
 }

@@ -5,9 +5,8 @@ use crate::scene::Scene;
 use crate::EngineConfig;
 use kiss3d::window::Window;
 use kiss3d::light::Light;
-use kiss3d::camera::{ArcBall, FirstPerson};
+use kiss3d::camera::{ArcBall, FirstPerson, Camera};
 use kiss3d::nalgebra::{Point3, Vector3};
-use std::collections::HashMap;
 
 pub struct RenderingSystem {
     window: Window,
@@ -126,7 +125,7 @@ impl RenderingSystem {
 
     pub fn get_window_size(&self) -> (u32, u32) {
         let size = self.window.size();
-        (size.0 as u32, size.1 as u32)
+        (size.x as u32, size.y as u32)
     }
 
     pub fn set_window_title(&mut self, title: &str) {

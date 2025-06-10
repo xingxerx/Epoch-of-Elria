@@ -1,0 +1,13 @@
+/mnt/f/Epoch of Elria/target/debug/deps/libraw_window_handle-553f10ffcdadd45b.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/android.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/appkit.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/haiku.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/redox.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/uikit.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/unix.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/web.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/windows.rs
+
+/mnt/f/Epoch of Elria/target/debug/deps/raw_window_handle-553f10ffcdadd45b.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/android.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/appkit.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/haiku.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/redox.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/uikit.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/unix.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/web.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/windows.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/android.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/appkit.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/haiku.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/redox.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/uikit.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/unix.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/web.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/raw-window-handle-0.4.3/src/windows.rs:
