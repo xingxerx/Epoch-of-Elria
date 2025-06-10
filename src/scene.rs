@@ -114,8 +114,8 @@ impl Scene {
         self.objects.get(&id).map(|obj| obj.as_ref())
     }
 
-    pub fn get_object_mut(&mut self, id: usize) -> Option<&mut dyn GameObject> {
-        self.objects.get_mut(&id).map(|obj| obj.as_mut())
+    pub fn get_object_mut(&mut self, id: usize) -> Option<&mut (dyn GameObject + '_)> {
+        self.objects.get_mut(&id).map(move |obj| obj.as_mut())
     }
 
     pub fn find_object_by_name(&self, name: &str) -> Option<(usize, &dyn GameObject)> {
@@ -159,7 +159,7 @@ impl Scene {
     }
 
     pub fn add_platform(&mut self, size: Vector3D, position: Vector3D) -> usize {
-        let platform = Box::new(Platform::new(size, position, crate::game_objects::PlatformType::Solid));
+        let platform = Box::new(Platform::new(size, position, crate::game_objects::PlatformType::Static));
         self.add_static_object(platform)
     }
 
@@ -513,8 +513,8 @@ impl SceneTemplates {
         scene.add_platform(Vector3D::new(8.0, 3.0, -5.0), Vector3D::new(4.0, 1.0, 4.0));
         
         // Add some enemies
-        scene.add_enemy(Vector3D::new(-5.0, 1.0, -8.0), 100);
-        scene.add_enemy(Vector3D::new(5.0, 1.0, -8.0), 100);
+        scene.add_enemy(Vector3D::new(-5.0, 1.0, -8.0));
+        scene.add_enemy(Vector3D::new(5.0, 1.0, -8.0));
         
         scene.set_background_color(0.2, 0.3, 0.6);
         scene.set_ambient_light(0.4);

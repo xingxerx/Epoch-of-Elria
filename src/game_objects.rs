@@ -606,7 +606,6 @@ impl GameObject for Enemy {
 pub struct Platform {
     name: String,
     id: usize,
-    id: usize,
     position: Vector3D,
     size: Vector3D,
     active: bool,
