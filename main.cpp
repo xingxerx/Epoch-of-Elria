@@ -1,4 +1,4 @@
-// main.cpp
+// main.cpp - Epoch of Elria Game Engine
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
@@ -9,18 +9,10 @@
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
-
-#include <SFML/Graphics.hpp>
+#include <fstream>
+#include <memory>
 
 // --- 1. Vector2D Class ---
-void svg_start(std::ofstream& svgfile) {
-    svgfile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">" << std::endl;
-}
-
-void svg_end(std::ofstream& svgfile) {
-    svgfile << "</svg>" << std::endl;
-}
-
 // Represents a 2D point or vector in space.
 // Essential for positions, velocities, and sizes in games.
 class Vector2D {
@@ -86,16 +78,15 @@ protected:
     double width;       // Width of the object
     double height;      // Height of the object
     std::string name;   // Name of the object (e.g., "Player", "Enemy1")
+    sf::Color color;    // Color for SFML rendering
 
 public:
     // Constructor
-    GameObject(std::string obj_name, double start_x, double start_y, double obj_width, double obj_height)
-        : name(obj_name), position(start_x, start_y), width(obj_width), height(obj_height), velocity(0.0, 0.0) {}
+    GameObject(std::string obj_name, double start_x, double start_y, double obj_width, double obj_height, sf::Color obj_color = sf::Color::White)
+        : name(obj_name), position(start_x, start_y), width(obj_width), height(obj_height), velocity(0.0, 0.0), color(obj_color) {}
 
     // Virtual destructor to ensure proper cleanup for derived classes
-    virtual ~GameObject() {
-        // std::cout << "GameObject '" << name << "' destroyed." << std::endl; // Commented to reduce excessive output
-    }
+    virtual ~GameObject() = default;
 
     // --- Getters ---
     const Vector2D& getPosition() const { return position; }
@@ -103,10 +94,12 @@ public:
     double getWidth() const { return width; }
     double getHeight() const { return height; }
     const std::string& getName() const { return name; }
+    sf::Color getColor() const { return color; }
 
     // --- Setters ---
     void setPosition(double x, double y) { position.x = x; position.y = y; }
     void setVelocity(double vx, double vy) { velocity.x = vx; velocity.y = vy; }
+    void setColor(sf::Color new_color) { color = new_color; }
 
     // --- Core Game Loop Methods (virtual for overriding by derived classes) ---
 
@@ -115,8 +108,24 @@ public:
         position = position + (velocity * deltaTime);
     }
 
-    // Draw method: Called every frame to render the object.
-    virtual void Draw(std::ofstream& svg) const {}
+    // Draw method: Called every frame to render the object using SFML.
+    virtual void Draw(sf::RenderWindow& window) const {
+        sf::RectangleShape shape(sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
+        shape.setPosition(static_cast<float>(position.x), static_cast<float>(position.y));
+        shape.setFillColor(color);
+        shape.setOutlineThickness(1.0f);
+        shape.setOutlineColor(sf::Color::Black);
+        window.draw(shape);
+    }
+
+    // SVG export method for debugging/recording
+    virtual void DrawSVG(std::ofstream& svg) const {
+        svg << "<rect x='" << position.x << "' y='" << position.y
+            << "' width='" << width << "' height='" << height
+            << "' fill='rgb(" << static_cast<int>(color.r) << "," 
+            << static_cast<int>(color.g) << "," << static_cast<int>(color.b) 
+            << ")' stroke='black' stroke-width='1'/>\n";
+    }
 
     // Basic collision detection (Axis-Aligned Bounding Box - AABB)
     bool CheckCollision(const GameObject& other) const {
@@ -129,23 +138,58 @@ public:
 
 // --- Example Derived Class: Player ---
 class Player : public GameObject {
+private:
+    double speed;
+    bool keys[4] = {false}; // W, A, S, D
+
 public:
     Player(double start_x, double start_y)
-        : GameObject("Player", start_x, start_y, 50, 50) { // Player is 50x50
+        : GameObject("Player", start_x, start_y, 50, 50, sf::Color::Blue), speed(200.0) {
         std::cout << "Player created!" << std::endl;
     }
 
-    void Update(double deltaTime) override {
-        // For this console example, we'll just move it right for a bit
-        // In a real game, this would read input or follow complex AI
-        velocity.x = 50.0; // Move right at 50 units/second
-        GameObject::Update(deltaTime); // Call base class Update for generic movement
+    void HandleInput(const sf::Event& event) {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::W: keys[0] = true; break;
+                case sf::Keyboard::A: keys[1] = true; break;
+                case sf::Keyboard::S: keys[2] = true; break;
+                case sf::Keyboard::D: keys[3] = true; break;
+                default: break;
+            }
+        } else if (event.type == sf::Event::KeyReleased) {
+            switch (event.key.code) {
+                case sf::Keyboard::W: keys[0] = false; break;
+                case sf::Keyboard::A: keys[1] = false; break;
+                case sf::Keyboard::S: keys[2] = false; break;
+                case sf::Keyboard::D: keys[3] = false; break;
+                default: break;
+            }
+        }
     }
 
-    void Draw(std::ofstream& svg) const override {
-        svg << "<rect x='" << position.x << "' y='" << position.y
-            << "' width='" << width << "' height='" << height
-            << "' fill='blue' stroke='black' stroke-width='2'/>\n";
+    void Update(double deltaTime) override {
+        // Update velocity based on input
+        velocity.x = 0.0;
+        velocity.y = 0.0;
+
+        if (keys[0]) velocity.y -= speed; // W - Up
+        if (keys[1]) velocity.x -= speed; // A - Left
+        if (keys[2]) velocity.y += speed; // S - Down
+        if (keys[3]) velocity.x += speed; // D - Right
+
+        // Normalize diagonal movement
+        if (velocity.magnitude() > speed) {
+            velocity = velocity.normalize() * speed;
+        }
+
+        GameObject::Update(deltaTime); // Call base class Update for generic movement
+
+        // Keep player within screen bounds
+        if (position.x < 0) position.x = 0;
+        if (position.y < 0) position.y = 0;
+        if (position.x + width > 800) position.x = 800 - width;
+        if (position.y + height > 600) position.y = 600 - height;
     }
 };
 
@@ -155,46 +199,64 @@ private:
     int value; // How many points this collectible is worth
     bool collected; // Is it collected?
     mutable std::mutex collectible_mutex; // Mutex to protect access if needed by multiple threads
+    double rotation; // For visual effect
 
 public:
     Collectible(double start_x, double start_y, int collect_value)
-        : GameObject("Collectible", start_x, start_y, 20, 20), // Collectible is 20x20
-          value(collect_value), collected(false) {
-        // std::cout << "Collectible created at "; // Commented to reduce excessive output
-        // position.print();
-        // std::cout << " with value " << value << std::endl;
-    }
+        : GameObject("Collectible", start_x, start_y, 20, 20, sf::Color::Yellow),
+          value(collect_value), collected(false), rotation(0.0) {}
 
     int getValue() const { return value; }
+    
     bool isCollected() const {
         std::lock_guard<std::mutex> lock(collectible_mutex); // Protect read
         return collected;
     }
+    
     void setCollected(bool status) {
         std::lock_guard<std::mutex> lock(collectible_mutex); // Protect write
         collected = status;
     }
 
     void Update(double deltaTime) override {
-        // Collectibles could also have their own movement/animation logic
-        // For now, they just stay put.
-        // Simulate some minor "work" that would be done in parallel
-        std::this_thread::sleep_for(std::chrono::microseconds(10)); // Simulate a tiny bit of work
+        if (!isCollected()) {
+            // Add some rotation for visual effect
+            rotation += 90.0 * deltaTime; // 90 degrees per second
+            if (rotation >= 360.0) rotation -= 360.0;
+            
+            // Simulate some minor "work" that would be done in parallel
+            std::this_thread::sleep_for(std::chrono::microseconds(10));
+        }
         GameObject::Update(deltaTime);
     }
 
-    void Draw(std::ofstream& svg) const override {
+    void Draw(sf::RenderWindow& window) const override {
         if (!isCollected()) {
-            svg << "<rect x='" << position.x << "' y='" << position.y
-                << "' width='" << width << "' height='" << height
-                << "' fill='gold' stroke='black' stroke-width='1'/>\n";
+            sf::CircleShape shape(static_cast<float>(width / 2));
+            shape.setPosition(static_cast<float>(position.x), static_cast<float>(position.y));
+            shape.setFillColor(color);
+            shape.setOutlineThickness(2.0f);
+            shape.setOutlineColor(sf::Color::Red);
+            
+            // Apply rotation
+            shape.setOrigin(static_cast<float>(width / 2), static_cast<float>(height / 2));
+            shape.setRotation(static_cast<float>(rotation));
+            
+            window.draw(shape);
+        }
+    }
+
+    void DrawSVG(std::ofstream& svg) const override {
+        if (!isCollected()) {
+            svg << "<circle cx='" << (position.x + width/2) << "' cy='" << (position.y + height/2)
+                << "' r='" << (width/2) << "' fill='gold' stroke='red' stroke-width='2'/>\n";
         }
     }
 };
 
-
 // Function to update a range of collectibles using indices
-void UpdateCollectiblesRange(std::vector<Collectible*>& collectibles, size_t start_index, size_t end_index, double deltaTime) {
+void UpdateCollectiblesRange(std::vector<std::unique_ptr<Collectible>>& collectibles, 
+                           size_t start_index, size_t end_index, double deltaTime) {
     for (size_t i = start_index; i < end_index; ++i) {
         if (i < collectibles.size() && !collectibles[i]->isCollected()) {
             collectibles[i]->Update(deltaTime);
@@ -202,111 +264,205 @@ void UpdateCollectiblesRange(std::vector<Collectible*>& collectibles, size_t sta
     }
 }
 
-// --- Main Game Simulation Loop ---
+// SVG utility functions for recording/debugging
+void svg_start(std::ofstream& svgfile) {
+    svgfile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">" << std::endl;
+}
 
-void RunGameSimulation() {
-    std::cout << "\n--- Starting C++ Game Simulation (with Parallel Collectible Updates) ---" << std::endl;
+void svg_end(std::ofstream& svgfile) {
+    svgfile << "</svg>" << std::endl;
+}
 
-    // Create game objects
-    Player player(100, 100);
+// --- Main Game Class ---
+class Game {
+private:
+    sf::RenderWindow window;
+    std::unique_ptr<Player> player;
+    std::vector<std::unique_ptr<Collectible>> collectibles;
+    sf::Clock clock;
+    int totalScore;
+    sf::Font font;
+    sf::Text scoreText;
+    bool recordSVG;
+    int frameCount;
 
-    std::vector<Collectible*> collectibles;
-    // Create a good number of collectibles to demonstrate parallel processing
-    const int NUM_COLLECTIBLES = 1000;
-    for (int i = 0; i < NUM_COLLECTIBLES; ++i) {
-        collectibles.push_back(new Collectible(
-            static_cast<double>(rand() % 800), // Random X (assuming canvas width 800)
-            static_cast<double>(rand() % 400), // Random Y (assuming canvas height 400)
-            10 // Value
-        ));
+public:
+    Game() : window(sf::VideoMode(800, 600), "Epoch of Elria - Game Engine Demo"),
+             totalScore(0), recordSVG(false), frameCount(0) {
+        
+        // Initialize player
+        player = std::make_unique<Player>(375, 275); // Center of screen
+        
+        // Create collectibles
+        const int NUM_COLLECTIBLES = 50; // Reduced for better performance in real-time
+        for (int i = 0; i < NUM_COLLECTIBLES; ++i) {
+            collectibles.push_back(std::make_unique<Collectible>(
+                static_cast<double>(rand() % 760), // Random X (leave margin)
+                static_cast<double>(rand() % 560), // Random Y (leave margin)
+                10 // Value
+            ));
+        }
+
+        // Try to load font (optional)
+        if (!font.loadFromFile("arial.ttf")) {
+            // Use default font if arial.ttf not found
+            std::cout << "Warning: Could not load arial.ttf, using default font" << std::endl;
+        }
+        
+        scoreText.setFont(font);
+        scoreText.setCharacterSize(24);
+        scoreText.setFillColor(sf::Color::White);
+        scoreText.setPosition(10, 10);
+        
+        window.setFramerateLimit(60);
+        std::cout << "Game initialized with " << collectibles.size() << " collectibles" << std::endl;
     }
 
-    // Determine how many threads to use
-    // Using std::thread::hardware_concurrency() is a good default for real systems
-    unsigned int num_threads = std::thread::hardware_concurrency();
-    if (num_threads == 0) num_threads = 1; // Fallback if hardware_concurrency returns 0
-    std::cout << "Using " << num_threads << " threads for collectible updates." << std::endl;
+    void Run() {
+        while (window.isOpen()) {
+            HandleEvents();
+            Update();
+            Render();
+        }
+    }
 
-    double deltaTime = 1.0 / 120.0; // Simulate 120 frames per second
-    int totalScore = 0;
+private:
+    void HandleEvents() {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            } else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::R) {
+                    recordSVG = !recordSVG;
+                    std::cout << "SVG Recording " << (recordSVG ? "ON" : "OFF") << std::endl;
+                } else if (event.key.code == sf::Keyboard::Escape) {
+                    window.close();
+                }
+            }
+            
+            // Pass input to player
+            player->HandleInput(event);
+        }
+    }
 
-    // Simulate a few frames of the game
-    for (int frame = 0; frame < 50; ++frame) { // Simulate 50 frames
-        std::cout << "\n--- Frame " << frame << " ---" << std::endl;
+    void Update() {
+        double deltaTime = clock.restart().asSeconds();
+        
+        // Update player
+        player->Update(deltaTime);
+        
+        // Update collectibles in parallel
+        UpdateCollectiblesParallel(deltaTime);
+        
+        // Check collisions
+        CheckCollisions();
+        
+        // Update score display
+        scoreText.setString("Score: " + std::to_string(totalScore) + 
+                           " | Collectibles: " + std::to_string(GetActiveCollectibles()) +
+                           " | Press R to toggle SVG recording");
+    }
 
-        // 1. Update Player (on main thread)
-        player.Update(deltaTime);
-
-        // 2. Update Collectibles in Parallel (Improved Version)
+    void UpdateCollectiblesParallel(double deltaTime) {
+        unsigned int num_threads = std::thread::hardware_concurrency();
+        if (num_threads == 0) num_threads = 1;
+        
         std::vector<std::thread> threads;
-
-        // Ensure we don't create more threads than collectibles
         unsigned int effective_threads = std::min(num_threads, static_cast<unsigned int>(collectibles.size()));
         if (effective_threads == 0) effective_threads = 1;
-
-        // Divide collectibles into chunks for each thread
+        
         size_t collectibles_per_thread = collectibles.size() / effective_threads;
         if (collectibles_per_thread == 0) collectibles_per_thread = 1;
-
+        
         for (unsigned int i = 0; i < effective_threads; ++i) {
             size_t start_index = i * collectibles_per_thread;
             size_t end_index = (i == effective_threads - 1) ? collectibles.size() : (start_index + collectibles_per_thread);
-
-            // Skip if this thread would have no work
+            
             if (start_index >= collectibles.size()) break;
-
-            // Launch a thread to update this range using indices (safer approach)
+            
             threads.emplace_back(UpdateCollectiblesRange, std::ref(collectibles), start_index, end_index, deltaTime);
         }
-
-        // Wait for all threads to complete their updates
+        
         for (std::thread& t : threads) {
             if (t.joinable()) {
                 t.join();
             }
         }
-        // At this point, all collectibles' positions have been updated in parallel.
+    }
 
-        // 3. Check for collisions (can be parallelized too, but let's keep it simple for now)
-        // This is done sequentially after all updates are complete to avoid complex synchronization
-        // issues if `collectibles` vector itself was modified (e.g., elements removed) during update.
-        for (Collectible* collect : collectibles) {
-            if (!collect->isCollected() && player.CheckCollision(*collect)) {
-                totalScore += collect->getValue();
-                collect->setCollected(true); // Mark as collected
-                std::cout << "Player collected " << collect->getName() << " at ";
-                collect->getPosition().print();
-                std::cout << "! Score: " << totalScore << std::endl;
+    void CheckCollisions() {
+        for (auto& collectible : collectibles) {
+            if (!collectible->isCollected() && player->CheckCollision(*collectible)) {
+                totalScore += collectible->getValue();
+                collectible->setCollected(true);
+                std::cout << "Collected! Score: " << totalScore << std::endl;
             }
         }
+    }
 
-        // 4. Draw all game objects to SVG file
-        std::string filename = "game_frame_" + std::to_string(frame) + ".svg";
+    int GetActiveCollectibles() const {
+        int count = 0;
+        for (const auto& collectible : collectibles) {
+            if (!collectible->isCollected()) count++;
+        }
+        return count;
+    }
+
+    void Render() {
+        window.clear(sf::Color::Black);
+        
+        // Draw all game objects
+        player->Draw(window);
+        for (const auto& collectible : collectibles) {
+            collectible->Draw(window);
+        }
+        
+        // Draw UI
+        window.draw(scoreText);
+        
+        window.display();
+        
+        // Record SVG if enabled
+        if (recordSVG) {
+            RecordSVGFrame();
+        }
+    }
+
+    void RecordSVGFrame() {
+        std::string filename = "game_frame_" + std::to_string(frameCount++) + ".svg";
         std::ofstream svgfile(filename);
         svg_start(svgfile);
-
-        player.Draw(svgfile);
-        for (Collectible* collect : collectibles) {
-            collect->Draw(svgfile);
+        
+        player->DrawSVG(svgfile);
+        for (const auto& collectible : collectibles) {
+            collectible->DrawSVG(svgfile);
         }
-
+        
         svg_end(svgfile);
         svgfile.close();
     }
+};
 
-    std::cout << "\n--- End of C++ Game Simulation ---" << std::endl;
-    std::cout << "Final Score: " << totalScore << std::endl;
-
-    // Clean up dynamically allocated collectibles
-    for (Collectible* collect : collectibles) {
-        delete collect;
-    }
-    collectibles.clear();
-}
-
+// --- Main Function ---
 int main() {
     // Seed random number generator for collectible positions
-    srand(static_cast<unsigned int>(time(NULL)));
-    RunGameSimulation();
+    srand(static_cast<unsigned int>(time(nullptr)));
+    
+    std::cout << "=== Epoch of Elria Game Engine ===" << std::endl;
+    std::cout << "Controls:" << std::endl;
+    std::cout << "  WASD - Move player" << std::endl;
+    std::cout << "  R - Toggle SVG recording" << std::endl;
+    std::cout << "  ESC - Exit game" << std::endl;
+    std::cout << "===================================" << std::endl;
+    
+    try {
+        Game game;
+        game.Run();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
+    
     return 0;
 }
