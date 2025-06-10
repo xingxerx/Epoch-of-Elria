@@ -26,9 +26,9 @@ fn main() {
         // Move cubes for 120 frames, then stop
         if frame < 120 {
  for (cube, velocity) in cubes.iter_mut() {
-                let mut pos = cube.0.data().local_translation().vector;
+                let mut pos = cube.data().local_translation().vector;
                 pos += *velocity;
-                cube.0.set_local_translation(Translation3::from(pos));
+                cube.set_local_translation(Translation3::from(pos));
             }
             frame += 1;
         }
