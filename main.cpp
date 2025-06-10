@@ -289,7 +289,7 @@ void RunGameSimulation() {
             collect->Draw(svgfile);
         }
 
-        endSVGFile(svgfile);
+        svg_end(svgfile);
         svgfile.close();
     }
 
