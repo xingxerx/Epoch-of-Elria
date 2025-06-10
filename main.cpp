@@ -8,20 +8,20 @@
 #include <chrono>   // For simulating work (optional, but good for demoing multithreading)
 #include <cstdlib>  // For rand(), srand()
 #include <ctime>    // For time()
-#include <fstream>    // For file output
-#include <sstream>    // For string stream
+#include <fstream>  // For file output
+#include <sstream>  // For string stream
 
 // SVG helpers
 const int SVG_WIDTH = 800;
 const int SVG_HEIGHT = 400;
 
-void svg_start(std::ofstream& ofs) {
+void startSVGFile(std::ofstream& ofs) {
     ofs << "<svg xmlns='http://www.w3.org/2000/svg' width='" << SVG_WIDTH
         << "' height='" << SVG_HEIGHT << "'>\n"
         << "<rect width='100%' height='100%' fill='white'/>\n"; // Background
 }
 
-void svg_end(std::ofstream& ofs) {
+void endSVGFile(std::ofstream& ofs) {
     ofs << "</svg>\n";
 }
 #include <fstream>    // For file output
@@ -137,12 +137,7 @@ public:
     }
 
     // Draw method: Called every frame to render the object.
-    virtual void Draw(std::ofstream& svg) const {
-        // Base class draw method - can be overridden by derived classes
-        svg << "<rect x='" << position.x << "' y='" << position.y
-            << "' width='" << width << "' height='" << height
-            << "' fill='gray'/>\n";
-    }
+    virtual void Draw(std::ofstream& svg) const {}
 
     // Basic collision detection (Axis-Aligned Bounding Box - AABB)
     bool CheckCollision(const GameObject& other) const {
@@ -169,9 +164,9 @@ public:
     }
 
     void Draw(std::ofstream& svg) const override {
-        svg << "<rect x=\"" << position.x << "\" y=\"" << position.y
-            << "\" width=\"" << width << "\" height=\"" << height
-            << "\" fill=\"blue\"/>\n";
+        svg << "<rect x='" << position.x << "' y='" << position.y
+            << "' width='" << width << "' height='" << height
+            << "' fill='blue' stroke='black' stroke-width='2'/>\n";
     }
 };
 
@@ -211,9 +206,9 @@ public:
 
     void Draw(std::ofstream& svg) const override {
         if (!isCollected()) {
-            svg << "<rect x=\"" << position.x << "\" y=\"" << position.y
-                << "\" width=\"" << width << "\" height=\"" << height
-                << "\" fill=\"gold\"/>\n";
+            svg << "<rect x='" << position.x << "' y='" << position.y
+                << "' width='" << width << "' height='" << height
+                << "' fill='gold' stroke='black' stroke-width='1'/>\n";
         }
     }
 };
@@ -307,19 +302,17 @@ void RunGameSimulation() {
         }
 
         // 4. Draw all game objects to SVG file
-        std::stringstream filename;
-        filename << "game_frame_" << frame << ".svg";
-        std::ofstream svgFile(filename.str());
-        svg_start(svgFile);
+        std::string filename = "game_frame_" + std::to_string(frame) + ".svg";
+        std::ofstream svgfile(filename);
+        startSVGFile(svgfile);
 
-        // Draw all objects
-        player.Draw(svgFile);
+        player.Draw(svgfile);
         for (Collectible* collect : collectibles) {
-            collect->Draw(svgFile);
+            collect->Draw(svgfile);
         }
 
-        svg_end(svgFile);
-        svgFile.close();
+        endSVGFile(svgfile);
+        svgfile.close();
     }
 
     std::cout << "\n--- End of C++ Game Simulation ---" << std::endl;
