@@ -1,15 +1,14 @@
 // main.cpp
-#include <iostream> // For console output
-#include <vector>   // For dynamic arrays of game objects
-#include <string>   // For object names
-#include <cmath>    // For mathematical operations
-#include <thread>   // For parallel processing with std::thread
-#include <mutex>    // For std::mutex (though not strictly necessary for this simple example, good practice)
-#include <chrono>   // For simulating work (optional, but good for demoing multithreading)
-#include <cstdlib>  // For rand(), srand()
-#include <ctime>    // For time()
-#include <fstream>  // For file output
-#include <sstream>  // For string stream
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cmath>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <cstdlib>
+#include <ctime>
 
 #include <SFML/Graphics.hpp>
 
