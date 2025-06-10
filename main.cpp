@@ -24,22 +24,6 @@ void startSVGFile(std::ofstream& ofs) {
 void endSVGFile(std::ofstream& ofs) {
     ofs << "</svg>\n";
 }
-#include <fstream>    // For file output
-#include <sstream>    // For string stream
-
-// SVG helpers
-const int SVG_WIDTH = 800;
-const int SVG_HEIGHT = 400;
-
-void svg_start(std::ofstream& ofs) {
-    ofs << "<svg xmlns='http://www.w3.org/2000/svg' width='" << SVG_WIDTH
-        << "' height='" << SVG_HEIGHT << "'>\n"
-        << "<rect width='100%' height='100%' fill='white'/>\n"; // Background
-}
-
-void svg_end(std::ofstream& ofs) {
-    ofs << "</svg>\n";
-}
 
 // --- 1. Vector2D Class ---
 // Represents a 2D point or vector in space.
