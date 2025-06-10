@@ -11,6 +11,8 @@
 #include <fstream>  // For file output
 #include <sstream>  // For string stream
 
+#include <SFML/Graphics.hpp>
+
 // --- 1. Vector2D Class ---
 void svg_start(std::ofstream& svgfile) {
     svgfile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">" << std::endl;
