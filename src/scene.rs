@@ -114,8 +114,8 @@ impl Scene {
         self.objects.get(&id).map(|obj| obj.as_ref())
     }
 
-    pub fn get_object_mut(&mut self, id: usize) -> Option<&mut (dyn GameObject + '_)> {
-        self.objects.get_mut(&id).map(move |obj| obj.as_mut())
+    pub fn get_object_mut(&mut self, id: usize) -> Option<&mut Box<dyn GameObject>> {
+        self.objects.get_mut(&id)
     }
 
     pub fn find_object_by_name(&self, name: &str) -> Option<(usize, &dyn GameObject)> {
