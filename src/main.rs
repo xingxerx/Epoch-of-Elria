@@ -62,7 +62,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if input.is_key_pressed(Key::Space) {
                 movement.y += 1.0;
             }
-            if input.is_key_pressed(Key::LeftShift) {
+            if input.is_key_pressed(Key::LShift) {
                 movement.y -= 1.0;
             }
             
