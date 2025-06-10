@@ -11,6 +11,36 @@
 #include <fstream>    // For file output
 #include <sstream>    // For string stream
 
+// SVG helpers
+const int SVG_WIDTH = 800;
+const int SVG_HEIGHT = 400;
+
+void svg_start(std::ofstream& ofs) {
+    ofs << "<svg xmlns='http://www.w3.org/2000/svg' width='" << SVG_WIDTH
+        << "' height='" << SVG_HEIGHT << "'>\n"
+        << "<rect width='100%' height='100%' fill='white'/>\n"; // Background
+}
+
+void svg_end(std::ofstream& ofs) {
+    ofs << "</svg>\n";
+}
+#include <fstream>    // For file output
+#include <sstream>    // For string stream
+
+// SVG helpers
+const int SVG_WIDTH = 800;
+const int SVG_HEIGHT = 400;
+
+void svg_start(std::ofstream& ofs) {
+    ofs << "<svg xmlns='http://www.w3.org/2000/svg' width='" << SVG_WIDTH
+        << "' height='" << SVG_HEIGHT << "'>\n"
+        << "<rect width='100%' height='100%' fill='white'/>\n"; // Background
+}
+
+void svg_end(std::ofstream& ofs) {
+    ofs << "</svg>\n";
+}
+
 // --- 1. Vector2D Class ---
 // Represents a 2D point or vector in space.
 // Essential for positions, velocities, and sizes in games.
@@ -107,11 +137,11 @@ public:
     }
 
     // Draw method: Called every frame to render the object.
-    virtual void Draw() const {
-        // std::cout << "Drawing " << name << " at position "; // Commented to reduce excessive output
-        // position.print();
-        // std::cout << " with size (" << width << ", " << height << ")" << std::endl;
-        // This is a placeholder. Actual drawing would use a graphics API (OpenGL, DirectX, Vulkan).
+    virtual void Draw(std::ofstream& svg) const {
+        // Base class draw method - can be overridden by derived classes
+        svg << "<rect x='" << position.x << "' y='" << position.y
+            << "' width='" << width << "' height='" << height
+            << "' fill='gray'/>\n";
     }
 
     // Basic collision detection (Axis-Aligned Bounding Box - AABB)
@@ -199,16 +229,6 @@ void UpdateCollectiblesRange(std::vector<Collectible*>& collectibles, size_t sta
 }
 
 // --- Main Game Simulation Loop ---
-// SVG helper functions
-void startSVGFile(std::ofstream& file, int width = 800, int height = 400) {
-    file << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-         << "<svg width=\"" << width << "\" height=\"" << height
-         << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
-}
-
-void endSVGFile(std::ofstream& file) {
-    file << "</svg>\n";
-}
 
 void RunGameSimulation() {
     std::cout << "\n--- Starting C++ Game Simulation (with Parallel Collectible Updates) ---" << std::endl;
@@ -242,7 +262,6 @@ void RunGameSimulation() {
 
         // 1. Update Player (on main thread)
         player.Update(deltaTime);
-        player.Draw(); // Draw player immediately after update
 
         // 2. Update Collectibles in Parallel (Improved Version)
         std::vector<std::thread> threads;
@@ -291,7 +310,7 @@ void RunGameSimulation() {
         std::stringstream filename;
         filename << "game_frame_" << frame << ".svg";
         std::ofstream svgFile(filename.str());
-        startSVGFile(svgFile);
+        svg_start(svgFile);
 
         // Draw all objects
         player.Draw(svgFile);
@@ -299,7 +318,7 @@ void RunGameSimulation() {
             collect->Draw(svgFile);
         }
 
-        endSVGFile(svgFile);
+        svg_end(svgFile);
         svgFile.close();
     }
 
