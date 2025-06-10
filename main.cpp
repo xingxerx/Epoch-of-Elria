@@ -10,9 +10,16 @@
 #include <ctime>    // For time()
 #include <fstream>  // For file output
 #include <sstream>  // For string stream
-#include <SFML/Graphics.hpp>
 
 // --- 1. Vector2D Class ---
+void svg_start(std::ofstream& svgfile) {
+    svgfile << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">" << std::endl;
+}
+
+void svg_end(std::ofstream& svgfile) {
+    svgfile << "</svg>" << std::endl;
+}
+
 // Represents a 2D point or vector in space.
 // Essential for positions, velocities, and sizes in games.
 class Vector2D {
@@ -275,7 +282,7 @@ void RunGameSimulation() {
         // 4. Draw all game objects to SVG file
         std::string filename = "game_frame_" + std::to_string(frame) + ".svg";
         std::ofstream svgfile(filename);
-        startSVGFile(svgfile);
+        svg_start(svgfile);
 
         player.Draw(svgfile);
         for (Collectible* collect : collectibles) {
