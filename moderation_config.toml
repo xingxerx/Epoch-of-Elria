@@ -1,0 +1,3 @@
+max_caps_ratio = 0.65
+toxicity_sensitivity = "moderate"
+auto_response_enabled = true
