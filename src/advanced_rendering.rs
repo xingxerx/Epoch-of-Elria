@@ -678,6 +678,13 @@ impl AdvancedRenderer {
         self.update_water(delta_time);
     }
 
+    fn update_water(&mut self, _delta_time: f32) {
+        for _water in &mut self.water_bodies {
+            // Update wave animation
+            // This would typically involve updating shader uniforms for wave displacement
+        }
+    }
+
     fn update_particle_systems(&mut self, delta_time: f32) {
         for (_, particle_system) in &mut self.particle_systems {
             if !particle_system.active {
@@ -689,12 +696,14 @@ impl AdvancedRenderer {
             // Emit new particles
             let particles_to_emit = (particle_system.emitter.emission_rate * delta_time) as usize;
             let emitter = particle_system.emitter.clone();
+            let mut new_particles = Vec::new();
             for _ in 0..particles_to_emit {
-                if particle_system.particles.len() < particle_system.max_particles {
-                    let particle = self.create_particle(&emitter);
-                    particle_system.particles.push(particle);
+                if particle_system.particles.len() + new_particles.len() < particle_system.max_particles {
+                    let particle = create_particle_standalone(&emitter);
+                    new_particles.push(particle);
                 }
             }
+            particle_system.particles.extend(new_particles);
 
             // Update existing particles
             let color_curve = particle_system.emitter.color_over_lifetime.clone();
@@ -802,6 +811,33 @@ impl AdvancedRenderer {
     }
 }
 
+// Standalone particle creation function
+fn create_particle_standalone(emitter: &ParticleEmitter) -> Particle {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    let velocity = Vector3D::new(
+        rng.gen_range(emitter.velocity_range.0.x..=emitter.velocity_range.1.x),
+        rng.gen_range(emitter.velocity_range.0.y..=emitter.velocity_range.1.y),
+        rng.gen_range(emitter.velocity_range.0.z..=emitter.velocity_range.1.z),
+    );
+
+    let size = rng.gen_range(emitter.size_range.0..=emitter.size_range.1);
+    let lifetime = rng.gen_range(emitter.lifetime_range.0..=emitter.lifetime_range.1);
+
+    Particle {
+        position: emitter.position,
+        velocity,
+        acceleration: Vector3D::new(0.0, -9.81, 0.0), // Gravity
+        size,
+        color: (1.0, 1.0, 1.0, 1.0), // White
+        lifetime,
+        age: 0.0,
+        rotation: 0.0,
+        angular_velocity: rng.gen_range(-1.0..=1.0),
+    }
+}
+
 // Standalone interpolation functions
 fn interpolate_color(color_curve: &[(f32, (f32, f32, f32, f32))], t: f32) -> (f32, f32, f32, f32) {
         if color_curve.is_empty() {
@@ -853,14 +889,6 @@ fn interpolate_size(size_curve: &[(f32, f32)], t: f32) -> f32 {
     }
 
 impl AdvancedRenderingSystem {
-
-    fn update_water(&mut self, delta_time: f32) {
-        for water in &mut self.water_bodies {
-            // Update wave animation
-            // This would typically involve updating shader uniforms for wave displacement
-        }
-    }
-
     // Render methods would be implemented here
     pub fn render(&mut self) {
         // Clear render queue
