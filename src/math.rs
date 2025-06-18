@@ -1,9 +1,10 @@
 // math.rs - Mathematical utilities for the game engine
 
 use std::ops::{Add, Sub, Mul, Div};
+use serde::{Serialize, Deserialize};
 
 // 2D Vector implementation
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Vector2D {
     pub x: f32,
     pub y: f32,
@@ -169,7 +170,7 @@ impl Div<f32> for Vector2D {
 }
 
 // 3D Vector implementation
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Vector3D {
     pub x: f32,
     pub y: f32,
@@ -351,7 +352,7 @@ impl Div<f32> for Vector3D {
 }
 
 // Matrix utilities
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Matrix3x3 {
     pub m: [[f32; 3]; 3],
 }

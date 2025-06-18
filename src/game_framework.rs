@@ -230,17 +230,20 @@ impl DialogueSystem {
         if let Some(node) = &self.current_node {
             if choice_index < node.choices.len() {
                 let choice = &node.choices[choice_index];
-                let next_node_id = &choice.next_node_id;
-                
+                let next_node_id = choice.next_node_id.clone();
+
+                // Clone actions to avoid borrowing issues
+                let actions = node.actions.clone();
+
                 // Execute actions
-                for action in &node.actions {
+                for action in &actions {
                     self.execute_action(action);
                 }
                 
                 // Move to next node
                 if let Some(dialogue_id) = &self.current_dialogue {
                     if let Some(nodes) = self.dialogue_trees.get(dialogue_id) {
-                        if let Some(next_node) = nodes.iter().find(|n| n.id == *next_node_id) {
+                        if let Some(next_node) = nodes.iter().find(|n| n.id == next_node_id) {
                             self.current_node = Some(next_node.clone());
                         } else {
                             // End dialogue

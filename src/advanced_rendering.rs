@@ -688,14 +688,18 @@ impl AdvancedRenderer {
 
             // Emit new particles
             let particles_to_emit = (particle_system.emitter.emission_rate * delta_time) as usize;
+            let emitter = particle_system.emitter.clone();
             for _ in 0..particles_to_emit {
                 if particle_system.particles.len() < particle_system.max_particles {
-                    let particle = self.create_particle(&particle_system.emitter);
+                    let particle = self.create_particle(&emitter);
                     particle_system.particles.push(particle);
                 }
             }
 
             // Update existing particles
+            let color_curve = particle_system.emitter.color_over_lifetime.clone();
+            let size_curve = particle_system.emitter.size_over_lifetime.clone();
+
             particle_system.particles.retain_mut(|particle| {
                 particle.age += delta_time;
                 if particle.age >= particle.lifetime {
@@ -709,8 +713,8 @@ impl AdvancedRenderer {
 
                 // Update color and size over lifetime
                 let life_progress = particle.age / particle.lifetime;
-                particle.color = self.interpolate_color(&particle_system.emitter.color_over_lifetime, life_progress);
-                particle.size *= self.interpolate_size(&particle_system.emitter.size_over_lifetime, life_progress);
+                particle.color = interpolate_color(&color_curve, life_progress);
+                particle.size *= interpolate_size(&size_curve, life_progress);
 
                 true
             });
@@ -790,6 +794,16 @@ impl AdvancedRenderer {
     }
 
     fn interpolate_color(&self, color_curve: &[(f32, (f32, f32, f32, f32))], t: f32) -> (f32, f32, f32, f32) {
+        interpolate_color(color_curve, t)
+    }
+
+    fn interpolate_size(&self, size_curve: &[(f32, f32)], t: f32) -> f32 {
+        interpolate_size(size_curve, t)
+    }
+}
+
+// Standalone interpolation functions
+fn interpolate_color(color_curve: &[(f32, (f32, f32, f32, f32))], t: f32) -> (f32, f32, f32, f32) {
         if color_curve.is_empty() {
             return (1.0, 1.0, 1.0, 1.0);
         }
@@ -816,7 +830,7 @@ impl AdvancedRenderer {
         color_curve.last().unwrap().1
     }
 
-    fn interpolate_size(&self, size_curve: &[(f32, f32)], t: f32) -> f32 {
+fn interpolate_size(size_curve: &[(f32, f32)], t: f32) -> f32 {
         if size_curve.is_empty() {
             return 1.0;
         }
@@ -837,6 +851,8 @@ impl AdvancedRenderer {
 
         size_curve.last().unwrap().1
     }
+
+impl AdvancedRenderingSystem {
 
     fn update_water(&mut self, delta_time: f32) {
         for water in &mut self.water_bodies {

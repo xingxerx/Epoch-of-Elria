@@ -568,6 +568,7 @@ impl GameInstance for RPGGame {
                 }
 
                 // Update UI
+                let exp_needed = self.calculate_exp_for_next_level();
                 for ui_element in &mut self.ui_elements {
                     match ui_element.id.as_str() {
                         "health_bar" => {
@@ -577,7 +578,6 @@ impl GameInstance for RPGGame {
                             };
                         }
                         "experience_bar" => {
-                            let exp_needed = self.calculate_exp_for_next_level();
                             ui_element.content = UIContent::Progress {
                                 current: self.player_stats.experience as f32,
                                 max: exp_needed as f32,
@@ -749,7 +749,7 @@ pub struct PowerUp {
     pub active: bool,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PowerUpType {
     SpeedBoost,
     JumpBoost,
