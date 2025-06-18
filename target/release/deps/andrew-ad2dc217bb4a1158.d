@@ -1,0 +1,12 @@
+/mnt/d/Epoch of Elria/Epoch-of-Elria/target/release/deps/libandrew-ad2dc217bb4a1158.rmeta: /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/lib.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/line.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/mod.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/rectangle.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/mod.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/fontconfig.rs
+
+/mnt/d/Epoch of Elria/Epoch-of-Elria/target/release/deps/libandrew-ad2dc217bb4a1158.rlib: /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/lib.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/line.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/mod.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/rectangle.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/mod.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/fontconfig.rs
+
+/mnt/d/Epoch of Elria/Epoch-of-Elria/target/release/deps/andrew-ad2dc217bb4a1158.d: /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/lib.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/line.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/mod.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/rectangle.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/mod.rs /home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/fontconfig.rs
+
+/home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/lib.rs:
+/home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/line.rs:
+/home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/mod.rs:
+/home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/shapes/rectangle.rs:
+/home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/mod.rs:
+/home/xing/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/andrew-0.3.1/src/text/fontconfig.rs:
