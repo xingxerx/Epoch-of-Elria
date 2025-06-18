@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Epoch of Elria Game Engine Launcher
+# Single command to start the unified 3D game engine
+
+echo "🌍 Starting Epoch of Elria Game Engine..."
+
+# Check if windowed engine exists, if not build it
+if [ ! -f "windowed_game_engine" ]; then
+    echo "🔨 Building windowed game engine..."
+    g++ -std=c++17 -O2 windowed_game_engine.cpp -o windowed_game_engine
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Build failed! Trying standalone version..."
+        if [ ! -f "standalone_game_engine" ]; then
+            g++ -std=c++17 -O2 standalone_game_engine.cpp -o standalone_game_engine
+        fi
+        
+        if [ -f "standalone_game_engine" ]; then
+            echo "🚀 Starting standalone engine..."
+            ./standalone_game_engine
+        else
+            echo "❌ Could not build engine. Trying existing games..."
+            if [ -f "simple_3d_game" ]; then
+                ./simple_3d_game
+            elif [ -f "game_svg" ]; then
+                ./game_svg
+            else
+                echo "❌ No games available. Please install g++ compiler."
+            fi
+        fi
+        exit 1
+    fi
+fi
+
+echo "🚀 Launching windowed game engine..."
+./windowed_game_engine
