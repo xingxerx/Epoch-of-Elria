@@ -88,3 +88,53 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     Ok(())
 }
+
+use winit::{
+    event::{Event, WindowEvent},
+    event_loop::{ControlFlow, EventLoop},
+    window::WindowBuilder,
+};
+
+fn main() {
+    // 1. Create an EventLoop
+    // The EventLoop is the core of winit, handling all OS-level events.
+    let event_loop = EventLoop::new().unwrap();
+
+    // 2. Create a Window
+    // Use WindowBuilder to configure your window's properties.
+    let window = WindowBuilder::new()
+        .with_title("Epoch of Elria") // Set the window title
+        .with_inner_size(winit::dpi::LogicalSize::new(800.0, 600.0)) // Set initial window size
+        .build(&event_loop)
+        .unwrap();
+
+    // 3. Run the Event Loop
+    // This starts the main application loop, processing events.
+    event_loop.run(move |event, elwt| {
+        // ControlFlow::Poll makes the event loop continuously poll for events,
+        // which is good for games that need to render continuously.
+        elwt.set_control_flow(ControlFlow::Poll);
+
+        match event {
+            // WindowEvent::CloseRequested is sent when the user clicks the 'X' button.
+            Event::WindowEvent {
+                event: WindowEvent::CloseRequested,
+                window_id,
+            } if window_id == window.id() => {
+                // When close is requested, tell the event loop to exit.
+                println!("Close requested, exiting application.");
+                elwt.set_control_flow(ControlFlow::Exit);
+            }
+            // Event::AboutToWait is triggered when the event loop is about to
+            // wait for new events. This is where you'd put your game logic
+            // and rendering code in a real game engine.
+            Event::AboutToWait => {
+                // In a real game, you would perform your rendering here.
+                // For now, we'll just print something to show it's active.
+                // println!("Game loop tick!"); // Uncomment for verbose ticking
+            }
+            // Other events can be handled here as needed (e.g., keyboard input, mouse movement).
+            _ => (),
+        }
+    }).unwrap(); // .unwrap() handles potential errors during event loop execution.
+}
