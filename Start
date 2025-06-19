@@ -2,64 +2,54 @@
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║              EPOCH OF ELRIA GAME ENGINE                     ║"
-echo "║                   3D Windowed Application                   ║"
+echo "║                   Application Launcher                      ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
-echo "🌍 Starting Epoch of Elria 3D Game Engine..."
+echo "🌍 Starting Epoch of Elria Game Engine..."
 
-# Check if windowed engine exists, if not build it
+# Build the game engine if it doesn't exist
 if [ ! -f "EpochOfElriaEngine" ]; then
-    echo "🔨 Building 3D windowed application..."
-
-    # Build the Linux windowed version with X11 and OpenGL
-    g++ -std=c++17 -O2 linux_windowed_engine.cpp -o EpochOfElriaEngine -lGL -lGLU -lX11 -lglx 2>/dev/null
+    echo "🔨 Building game engine..."
+    g++ -std=c++17 -O2 standalone_game_engine.cpp -o EpochOfElriaEngine
 
     if [ $? -ne 0 ]; then
-        echo "❌ X11/OpenGL build failed! Trying without glx..."
-        g++ -std=c++17 -O2 linux_windowed_engine.cpp -o EpochOfElriaEngine -lGL -lGLU -lX11 2>/dev/null
-
-        if [ $? -ne 0 ]; then
-            echo "❌ OpenGL build failed! Trying standalone version..."
-            if [ ! -f "standalone_game_engine" ]; then
-                echo "🔨 Building standalone engine..."
-                g++ -std=c++17 -O2 standalone_game_engine.cpp -o standalone_game_engine
-            fi
-
-            if [ -f "standalone_game_engine" ]; then
-                echo "🚀 Starting standalone engine (console mode)..."
-                ./standalone_game_engine
-            else
-                echo "❌ Could not build engine. Trying existing games..."
-                if [ -f "simple_3d_game" ]; then
-                    ./simple_3d_game
-                elif [ -f "game_svg" ]; then
-                    ./game_svg
-                else
-                    echo "❌ No games available!"
-                    echo ""
-                    echo "To build the windowed version, install:"
-                    echo "sudo apt install g++ libgl1-mesa-dev libglu1-mesa-dev libx11-dev"
-                fi
-            fi
-            exit 1
+        echo "❌ Build failed! Trying existing games..."
+        if [ -f "standalone_game_engine" ]; then
+            echo "🚀 Using existing standalone engine..."
+            cp standalone_game_engine EpochOfElriaEngine
+        elif [ -f "simple_3d_game" ]; then
+            echo "🚀 Using simple 3D game..."
+            cp simple_3d_game EpochOfElriaEngine
         else
-            echo "✅ 3D windowed application built successfully!"
+            echo "❌ No games available! Please install g++ compiler."
+            exit 1
         fi
     else
-        echo "✅ 3D windowed application built successfully!"
+        echo "✅ Build successful!"
     fi
 fi
 
-echo "🚀 Launching Epoch of Elria 3D Game Engine..."
-echo "🎮 Opening 3D application window..."
-echo ""
-echo "The 3D window should open on your screen!"
-echo "If running in WSL, make sure you have an X server running."
+echo "🚀 Launching Epoch of Elria Game Engine..."
 echo ""
 
-# Set display if needed
-if [ -z "$DISPLAY" ]; then
-    export DISPLAY=:0
+# Try to open in a new terminal window (application-like behavior)
+if command -v gnome-terminal >/dev/null 2>&1; then
+    echo "🎮 Opening in new application window..."
+    gnome-terminal --title="🌍 Epoch of Elria Game Engine" --geometry=120x40 -- bash -c "./EpochOfElriaEngine; echo ''; echo 'Press any key to close...'; read -n 1"
+elif command -v xterm >/dev/null 2>&1; then
+    echo "🎮 Opening in new application window..."
+    xterm -title "🌍 Epoch of Elria Game Engine" -geometry 120x40 -e bash -c "./EpochOfElriaEngine; echo ''; echo 'Press any key to close...'; read -n 1" &
+elif command -v konsole >/dev/null 2>&1; then
+    echo "🎮 Opening in new application window..."
+    konsole --title "🌍 Epoch of Elria Game Engine" -e bash -c "./EpochOfElriaEngine; echo ''; echo 'Press any key to close...'; read -n 1" &
+else
+    echo "🎮 Starting in current terminal..."
+    echo "Note: Install gnome-terminal, xterm, or konsole for windowed mode"
+    echo ""
+    ./EpochOfElriaEngine
 fi
 
-./EpochOfElriaEngine
+echo "✨ Game engine launched!"
+echo ""
+echo "If a new window opened, check your screen for the game!"
+echo "Controls: W/A/S/D - Move Camera | E - Edit Mode | X - Create Platform | Q - Quit"
