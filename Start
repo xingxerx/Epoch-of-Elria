@@ -2,54 +2,77 @@
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║              EPOCH OF ELRIA GAME ENGINE                     ║"
-echo "║                   Application Launcher                      ║"
+echo "║                   Windowed Application                      ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
-echo "🌍 Starting Epoch of Elria Game Engine..."
-
-# Build the game engine if it doesn't exist
-if [ ! -f "EpochOfElriaEngine" ]; then
-    echo "🔨 Building game engine..."
-    g++ -std=c++17 -O2 standalone_game_engine.cpp -o EpochOfElriaEngine
-
-    if [ $? -ne 0 ]; then
-        echo "❌ Build failed! Trying existing games..."
-        if [ -f "standalone_game_engine" ]; then
-            echo "🚀 Using existing standalone engine..."
-            cp standalone_game_engine EpochOfElriaEngine
-        elif [ -f "simple_3d_game" ]; then
-            echo "🚀 Using simple 3D game..."
-            cp simple_3d_game EpochOfElriaEngine
-        else
-            echo "❌ No games available! Please install g++ compiler."
-            exit 1
-        fi
-    else
-        echo "✅ Build successful!"
-    fi
-fi
-
-echo "🚀 Launching Epoch of Elria Game Engine..."
+echo "🌍 Starting Epoch of Elria 3D Game Engine..."
 echo ""
 
-# Try to open in a new terminal window (application-like behavior)
-if command -v gnome-terminal >/dev/null 2>&1; then
-    echo "🎮 Opening in new application window..."
-    gnome-terminal --title="🌍 Epoch of Elria Game Engine" --geometry=120x40 -- bash -c "./EpochOfElriaEngine; echo ''; echo 'Press any key to close...'; read -n 1"
-elif command -v xterm >/dev/null 2>&1; then
-    echo "🎮 Opening in new application window..."
-    xterm -title "🌍 Epoch of Elria Game Engine" -geometry 120x40 -e bash -c "./EpochOfElriaEngine; echo ''; echo 'Press any key to close...'; read -n 1" &
-elif command -v konsole >/dev/null 2>&1; then
-    echo "🎮 Opening in new application window..."
-    konsole --title "🌍 Epoch of Elria Game Engine" -e bash -c "./EpochOfElriaEngine; echo ''; echo 'Press any key to close...'; read -n 1" &
+# Method 1: Try to create and open windowed HTML5 application
+echo "🔨 Building windowed application creator..."
+g++ -std=c++17 -O2 create_windowed_app.cpp -o CreateWindowedApp
+
+if [ $? -eq 0 ]; then
+    echo "✅ Build successful!"
+    echo "🚀 Creating and opening windowed application..."
+    ./CreateWindowedApp
+
+    # Keep terminal history visible
+    echo ""
+    echo "📋 TERMINAL HISTORY PRESERVED FOR TROUBLESHOOTING:"
+    echo "✅ Windowed application should be open in your browser"
+    echo "📁 File created: EpochOfElriaEngine.html"
+    echo "🔧 If window didn't open, manually open: EpochOfElriaEngine.html"
+    echo ""
+    echo "🎮 Windowed App Features:"
+    echo "  • True browser window application"
+    echo "  • Click objects to interact"
+    echo "  • W/A/S/D movement controls"
+    echo "  • Edit Mode toggle (E key)"
+    echo "  • Platform creation (X key)"
+    echo "  • Real-time camera info"
+    echo ""
+    echo "💡 Terminal remains open for troubleshooting"
+
 else
-    echo "🎮 Starting in current terminal..."
-    echo "Note: Install gnome-terminal, xterm, or konsole for windowed mode"
+    echo "❌ Windowed app build failed! Using fallback console version..."
+    echo ""
+
+    # Fallback: Build and run console version but keep history
+    if [ ! -f "EpochOfElriaEngine" ]; then
+        echo "🔨 Building console engine..."
+        g++ -std=c++17 -O2 standalone_game_engine.cpp -o EpochOfElriaEngine
+
+        if [ $? -ne 0 ]; then
+            echo "❌ Console build failed! Trying existing games..."
+            if [ -f "standalone_game_engine" ]; then
+                echo "✅ Using existing standalone engine..."
+                cp standalone_game_engine EpochOfElriaEngine
+            elif [ -f "simple_3d_game" ]; then
+                echo "✅ Using simple 3D game..."
+                cp simple_3d_game EpochOfElriaEngine
+            else
+                echo "❌ No games available! Please install g++ compiler."
+                echo ""
+                echo "📋 TROUBLESHOOTING INFO:"
+                echo "  • Current directory: $(pwd)"
+                echo "  • Available files: $(ls *.cpp 2>/dev/null | head -5)"
+                echo "  • g++ version: $(g++ --version 2>/dev/null | head -1 || echo 'Not installed')"
+                exit 1
+            fi
+        fi
+    fi
+
+    echo "🎮 Starting console version (terminal history preserved)..."
     echo ""
     ./EpochOfElriaEngine
+
+    echo ""
+    echo "📋 TERMINAL HISTORY PRESERVED FOR TROUBLESHOOTING:"
+    echo "✅ Console version completed"
+    echo "🔧 To get windowed version, ensure g++ is installed"
+    echo "💡 Terminal remains open for troubleshooting"
 fi
 
-echo "✨ Game engine launched!"
 echo ""
-echo "If a new window opened, check your screen for the game!"
-echo "Controls: W/A/S/D - Move Camera | E - Edit Mode | X - Create Platform | Q - Quit"
+echo "🌟 Session complete - terminal history preserved for troubleshooting"
