@@ -1,37 +1,65 @@
 #!/bin/bash
 
-# Epoch of Elria Game Engine Launcher
-# Single command to start the unified 3D game engine
-
-echo "🌍 Starting Epoch of Elria Game Engine..."
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║              EPOCH OF ELRIA GAME ENGINE                     ║"
+echo "║                   3D Windowed Application                   ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "🌍 Starting Epoch of Elria 3D Game Engine..."
 
 # Check if windowed engine exists, if not build it
-if [ ! -f "windowed_game_engine" ]; then
-    echo "🔨 Building windowed game engine..."
-    g++ -std=c++17 -O2 windowed_game_engine.cpp -o windowed_game_engine
-    
+if [ ! -f "EpochOfElriaEngine" ]; then
+    echo "🔨 Building 3D windowed application..."
+
+    # Build the Linux windowed version with X11 and OpenGL
+    g++ -std=c++17 -O2 linux_windowed_engine.cpp -o EpochOfElriaEngine -lGL -lGLU -lX11 -lglx 2>/dev/null
+
     if [ $? -ne 0 ]; then
-        echo "❌ Build failed! Trying standalone version..."
-        if [ ! -f "standalone_game_engine" ]; then
-            g++ -std=c++17 -O2 standalone_game_engine.cpp -o standalone_game_engine
-        fi
-        
-        if [ -f "standalone_game_engine" ]; then
-            echo "🚀 Starting standalone engine..."
-            ./standalone_game_engine
-        else
-            echo "❌ Could not build engine. Trying existing games..."
-            if [ -f "simple_3d_game" ]; then
-                ./simple_3d_game
-            elif [ -f "game_svg" ]; then
-                ./game_svg
-            else
-                echo "❌ No games available. Please install g++ compiler."
+        echo "❌ X11/OpenGL build failed! Trying without glx..."
+        g++ -std=c++17 -O2 linux_windowed_engine.cpp -o EpochOfElriaEngine -lGL -lGLU -lX11 2>/dev/null
+
+        if [ $? -ne 0 ]; then
+            echo "❌ OpenGL build failed! Trying standalone version..."
+            if [ ! -f "standalone_game_engine" ]; then
+                echo "🔨 Building standalone engine..."
+                g++ -std=c++17 -O2 standalone_game_engine.cpp -o standalone_game_engine
             fi
+
+            if [ -f "standalone_game_engine" ]; then
+                echo "🚀 Starting standalone engine (console mode)..."
+                ./standalone_game_engine
+            else
+                echo "❌ Could not build engine. Trying existing games..."
+                if [ -f "simple_3d_game" ]; then
+                    ./simple_3d_game
+                elif [ -f "game_svg" ]; then
+                    ./game_svg
+                else
+                    echo "❌ No games available!"
+                    echo ""
+                    echo "To build the windowed version, install:"
+                    echo "sudo apt install g++ libgl1-mesa-dev libglu1-mesa-dev libx11-dev"
+                fi
+            fi
+            exit 1
+        else
+            echo "✅ 3D windowed application built successfully!"
         fi
-        exit 1
+    else
+        echo "✅ 3D windowed application built successfully!"
     fi
 fi
 
-echo "🚀 Launching windowed game engine..."
-./windowed_game_engine
+echo "🚀 Launching Epoch of Elria 3D Game Engine..."
+echo "🎮 Opening 3D application window..."
+echo ""
+echo "The 3D window should open on your screen!"
+echo "If running in WSL, make sure you have an X server running."
+echo ""
+
+# Set display if needed
+if [ -z "$DISPLAY" ]; then
+    export DISPLAY=:0
+fi
+
+./EpochOfElriaEngine
