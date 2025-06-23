@@ -172,7 +172,7 @@ impl PlayerData {
     // Example: Apply a permanent bonus
     // In a real game, this would be more structured, probably tied to specific bonus IDs and effects.
     pub fn apply_permanent_bonus(&mut self, bonus_id: String, value: f64) {
-        self.permanent_bonuses.insert(bonus_id, value);
+        self.permanent_bonuses.insert(bonus_id.clone(), value);
         log::info!("Applied permanent bonus: {} -> {}", bonus_id, value);
         // Note: The actual application of these bonuses (e.g., modifying generation rates)
         // would happen in the resource update logic, reading from this map.

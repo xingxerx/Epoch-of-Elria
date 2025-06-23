@@ -106,13 +106,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let config = EngineConfig {
         window_title: "Epoch of Elria - Idle RPG".to_string(),
-        window_width: 1024,
-        window_height: 768,
-        ..Default::default() // Use default for other settings
+        window_width: 800,
+        window_height: 600,
+        vsync: false, // Disable vsync for better WSL compatibility
+        fullscreen: false,
+        enable_physics: true,
+        enable_audio: false, // Disable audio for WSL
+        max_fps: Some(30), // Lower FPS for WSL
+        debug_mode: true,
     };
 
-    let mut engine = GameEngine::new(config)?;
-    log::info!("GameEngine initialized.");
+    let mut engine = match GameEngine::new(config) {
+        Ok(engine) => {
+            log::info!("GameEngine initialized successfully.");
+            engine
+        }
+        Err(e) => {
+            log::error!("Failed to initialize graphics engine: {}", e);
+            log::info!("Graphics not available in this environment. Running in console-only mode...");
+
+            // Run a simple console-only version
+            run_console_only_mode()?;
+            return Ok(());
+        }
+    };
 
     // Placeholder update function for the idle game
     let mut game_time_tracker: f32 = 0.0; // For simple timing within the closure if needed
@@ -120,27 +137,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         game_time_tracker += delta_time;
 
         // --- Input Handling for Idle Actions (Example) ---
-        if input.is_key_pressed_once(epoch_of_elria::input::Key::U) { // 'U' to upgrade first gold mine
+        if input.is_key_pressed(epoch_of_elria::input::Key::U) { // 'U' to upgrade first gold mine
             match idle_manager.upgrade_generator("gold_mine_1") {
                 Ok(_) => log::info!("Upgrade attempt for gold_mine_1 successful via key press."),
                 Err(e) => log::warn!("Upgrade attempt for gold_mine_1 failed: {}", e),
             }
         }
-        if input.is_key_pressed_once(epoch_of_elria::input::Key::I) { // 'I' to upgrade first dust extractor
+        if input.is_key_pressed(epoch_of_elria::input::Key::I) { // 'I' to upgrade first dust extractor
              match idle_manager.upgrade_generator("elrian_dust_extractor_1") {
                 Ok(_) => log::info!("Upgrade attempt for elrian_dust_extractor_1 successful."),
                 Err(e) => log::warn!("Upgrade attempt for elrian_dust_extractor_1 failed: {}", e),
             }
         }
-        if input.is_key_pressed_once(epoch_of_elria::input::Key::X) { // 'X' to gain 50 XP
+        if input.is_key_pressed(epoch_of_elria::input::Key::X) { // 'X' to gain 50 XP
             log::info!("Manually adding 50 XP.");
             idle_manager.manually_gain_xp(50);
         }
-        if input.is_key_pressed_once(epoch_of_elria::input::Key::R) { // 'R' to reset epoch
+        if input.is_key_pressed(epoch_of_elria::input::Key::R) { // 'R' to reset epoch
             log::info!("Attempting Epoch Reset via key press.");
             idle_manager.reset_epoch();
         }
-        if input.is_key_pressed_once(epoch_of_elria::input::Key::B) { // 'B' to apply a test bonus
+        if input.is_key_pressed(epoch_of_elria::input::Key::B) { // 'B' to apply a test bonus
             log::info!("Applying test permanent bonus (global_rate_multiplier = 1.5).");
             idle_manager.player_data.apply_permanent_bonus("global_rate_multiplier".to_string(), 1.5);
         }
@@ -220,5 +237,103 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // engine.get_idle_manager().player_data.save_to_file("player_data.json")?; // Placeholder
 
     log::info!("Application closed.");
+    Ok(())
+}
+
+// Console-only mode for environments without graphics support
+fn run_console_only_mode() -> Result<(), Box<dyn std::error::Error>> {
+    use epoch_of_elria::idle_systems::{IdleManager, GameConfig};
+    use std::io::{self, Write};
+    use std::thread;
+    use std::time::Duration;
+
+    log::info!("=== Epoch of Elria - Console Mode ===");
+    log::info!("Running idle RPG in console-only mode...");
+    log::info!("Commands: 'u' = upgrade gold mine, 'i' = upgrade dust extractor, 'x' = gain XP, 'r' = reset epoch, 'b' = bonus, 'q' = quit");
+
+    let game_config = GameConfig::default();
+    let mut idle_manager = IdleManager::new(game_config);
+
+    // Load existing save data
+    idle_manager.load_game_data();
+
+    let mut last_time = std::time::Instant::now();
+    let mut input_buffer = String::new();
+
+    loop {
+        let current_time = std::time::Instant::now();
+        let delta_time = current_time.duration_since(last_time).as_secs_f64();
+        last_time = current_time;
+
+        // Update idle systems
+        idle_manager.update(delta_time);
+
+        // Display stats every few seconds
+        if (current_time.elapsed().as_secs() % 3) == 0 {
+            println!("\n=== Idle Stats (Epoch {}) ===", idle_manager.player_data.current_epoch);
+            println!("Hero Level: {} (XP: {} / {}) SP: {}",
+                idle_manager.player_data.hero_level,
+                idle_manager.player_data.hero_xp,
+                idle_manager.player_data.get_xp_for_next_level(&idle_manager.game_config),
+                idle_manager.player_data.hero_skill_points);
+
+            for (res_type, amount) in &idle_manager.player_data.resources {
+                println!("{:?}: {:.2}", res_type, amount);
+            }
+
+            if let Some(gold_mine) = idle_manager.player_data.generators.get("gold_mine_1") {
+                println!("Gold Mine Level: {}", gold_mine.level);
+            }
+            if let Some(dust_gen) = idle_manager.player_data.generators.get("elrian_dust_extractor_1") {
+                println!("Dust Extractor Level: {}", dust_gen.level);
+            }
+            println!("Commands: u/i/x/r/b/q");
+            print!("> ");
+            io::stdout().flush().unwrap();
+        }
+
+        // Check for input (non-blocking)
+        input_buffer.clear();
+        if let Ok(_) = io::stdin().read_line(&mut input_buffer) {
+            let command = input_buffer.trim().to_lowercase();
+            match command.as_str() {
+                "u" => {
+                    match idle_manager.upgrade_generator("gold_mine_1") {
+                        Ok(_) => println!("Gold mine upgraded!"),
+                        Err(e) => println!("Upgrade failed: {}", e),
+                    }
+                }
+                "i" => {
+                    match idle_manager.upgrade_generator("elrian_dust_extractor_1") {
+                        Ok(_) => println!("Dust extractor upgraded!"),
+                        Err(e) => println!("Upgrade failed: {}", e),
+                    }
+                }
+                "x" => {
+                    idle_manager.manually_gain_xp(50);
+                    println!("Gained 50 XP!");
+                }
+                "r" => {
+                    idle_manager.reset_epoch();
+                    println!("Epoch reset!");
+                }
+                "b" => {
+                    idle_manager.player_data.apply_permanent_bonus("global_rate_multiplier".to_string(), 1.5);
+                    println!("Applied bonus!");
+                }
+                "q" => {
+                    println!("Saving and quitting...");
+                    idle_manager.save_game_data();
+                    break;
+                }
+                "" => {} // Empty input, continue
+                _ => println!("Unknown command: {}", command),
+            }
+        }
+
+        // Small delay to prevent excessive CPU usage
+        thread::sleep(Duration::from_millis(100));
+    }
+
     Ok(())
 }
