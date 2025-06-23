@@ -1,0 +1,4 @@
+max_caps_ratio = 0.65
+banned_words = ["spam", "slur1", "slur2"]
+toxicity_sensitivity = "moderate"
+auto_response_enabled = true

@@ -1,0 +1,18 @@
+[package]
+name = "epoch_of_elria"
+version = "0.1.0"
+edition = "2021"
+authors = ["xingxerx <xingxer@gmail.com>"]
+description = "A simple 3D game engine ported from C++ to Rust"
+license = "MIT"
+
+[dependencies]
+kiss3d = "0.35"
+rand = "0.8"
+env_logger = "0.10"
+log = "0.4"
+clap = { version = "4.1", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.7"
+winit = "0.29" # Use the latest stable version
