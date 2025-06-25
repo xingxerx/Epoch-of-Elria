@@ -835,6 +835,7 @@ fn create_particle_standalone(emitter: &ParticleEmitter) -> Particle {
         age: 0.0,
         rotation: 0.0,
         angular_velocity: rng.gen_range(-1.0..=1.0),
+        active: true,
     }
 }
 
@@ -887,6 +888,35 @@ fn interpolate_size(size_curve: &[(f32, f32)], t: f32) -> f32 {
 
         size_curve.last().unwrap().1
     }
+
+// Placeholder types for advanced features
+#[derive(Debug)]
+pub struct TerrainSystem {
+    pub heightmap: Vec<Vec<f32>>,
+    pub size: (f32, f32),
+    pub height_scale: f32,
+}
+
+#[derive(Debug)]
+pub struct WaterBody {
+    pub position: Vector3D,
+    pub size: (f32, f32),
+    pub wave_height: f32,
+    pub wave_speed: f32,
+}
+
+// Advanced rendering system that combines all rendering features
+#[derive(Debug)]
+pub struct AdvancedRenderingSystem {
+    pub render_queue: RenderQueue,
+    pub post_processing: PostProcessingStack,
+    pub camera_controller: CameraController,
+    pub particle_systems: HashMap<usize, ParticleSystem>,
+    pub skybox: Option<Skybox>,
+    pub terrain: Option<TerrainSystem>,
+    pub water_bodies: Vec<WaterBody>,
+    pub performance_stats: RenderStats,
+}
 
 impl AdvancedRenderingSystem {
     // Render methods would be implemented here

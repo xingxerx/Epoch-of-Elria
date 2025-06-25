@@ -106,10 +106,10 @@ impl GameEngine {
             last_time = current_time;
 
             // Handle input
-            self.input_manager.update(self.rendering_system.window_mut());
+            self.input_manager.update(&mut self.rendering_system);
 
             // Update idle systems
-            self.idle_manager.update(self.delta_time);
+            self.idle_manager.update(self.delta_time as f64);
 
             // Update game logic (now receives IdleManager)
             update_fn(&mut self.scene, &mut self.idle_manager, &self.input_manager, self.delta_time);
