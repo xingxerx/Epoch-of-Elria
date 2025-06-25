@@ -28,8 +28,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         enable_physics: true,
         enable_audio: false,
         vsync: true,
-        fullscreen: false,
-        max_fps: Some(60),
+        fullscreen: true,
+        max_fps: Some(120),
         debug_mode: true,
     };
     println!("Engine config created: {}x{}", config.window_width, config.window_height);
