@@ -1,7 +1,12 @@
 // audio.rs - Audio system for the game engine
 
+use anyhow::Result;
+use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink, Source};
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::BufReader;
 use std::path::Path;
+use std::sync::{Arc, Mutex};
 
 // Note: This is a placeholder audio system. In a real implementation,
 // you would use a crate like `rodio`, `cpal`, or `kira` for audio playback.

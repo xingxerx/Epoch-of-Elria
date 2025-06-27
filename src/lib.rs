@@ -119,6 +119,11 @@ impl GameEngine {
                 physics.step(self.delta_time);
             }
 
+            // Update audio
+            if let Some(ref mut audio) = self.audio_system {
+                audio.update(self.delta_time);
+            }
+
             // Render
             self.rendering_system.render(&self.scene)?;
 
@@ -164,6 +169,10 @@ impl GameEngine {
 
     pub fn get_physics(&mut self) -> Option<&mut PhysicsWorld> {
         self.physics_world.as_mut()
+    }
+
+    pub fn get_audio(&mut self) -> Option<&mut AudioSystem> {
+        self.audio_system.as_mut()
     }
 
     // Getter for IdleManager if direct access is needed outside update_fn
