@@ -7,6 +7,7 @@ pub mod input;
 pub mod physics;
 pub mod audio;
 pub mod scene;
+pub mod ui;
 pub mod game_framework;
 pub mod advanced_rendering;
 pub mod game_templates;
