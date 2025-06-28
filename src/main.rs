@@ -94,6 +94,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 */
 
 use epoch_of_elria::{GameEngine, EngineConfig, initialize_logging, Scene, InputManager};
+use epoch_of_elria::ui::{UI, UIText};
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -111,12 +112,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ..Default::default() // Use default for other settings
     };
 
+    let event_loop = EventLoop::new();
+    let window = WindowBuilder::new().build(&event_loop)?;
+
     let mut engine = GameEngine::new(config)?;
     log::info!("GameEngine initialized.");
 
+    let mut ui = UI::new();
+
     // Placeholder update function for the idle game
     let mut game_time_tracker: f32 = 0.0; // For simple timing within the closure if needed
-    let update_logic = move |scene: &mut Scene, idle_manager: &mut epoch_of_elria::idle_systems::IdleManager, input: &InputManager, delta_time: f32| {
+    let mut update_logic = move |scene: &mut Scene, idle_manager: &mut epoch_of_elria::idle_systems::IdleManager, input: &InputManager, delta_time: f32, ui: &mut UI| {
         game_time_tracker += delta_time;
 
         // --- Input Handling for Idle Actions (Example) ---
@@ -147,78 +153,106 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
         // --- Basic UI Rendering (kiss3d text) ---
-        // We need access to the rendering window. This is a bit tricky as GameEngine::run owns it.
-        // For a proper UI, we'd need a more dedicated UI system or pass rendering context.
-        // For now, we'll log to console, and plan for actual UI rendering later.
-        // A more direct way would be to have GameEngine expose methods to draw_ui_text.
+        ui.texts.clear();
+        let mut y_offset = 20.0;
+        let x_pos = 20.0;
+        let font_size = 20.0;
 
-        // Log current resources every so often (e.g., every 2 seconds of game_time_tracker)
-        // This is a placeholder for on-screen UI.
-        if (game_time_tracker as i32 % 2 == 0) && (delta_time > 0.001) { // Check delta_time to avoid spamming on fast loops/pauses
-             log::info!("--- Idle Stats ---");
-             log::info!("--- Idle Stats (Epoch {}) ---", idle_manager.player_data.current_epoch);
-             log::info!("Hero Level: {} (XP: {} / {}) SP: {}",
+        ui.texts.push(UIText {
+            text: format!("Epoch {}", idle_manager.player_data.current_epoch),
+            x: x_pos,
+            y: y_offset,
+            font_size,
+        });
+        y_offset += font_size;
+
+        ui.texts.push(UIText {
+            text: format!("Hero Level: {} (XP: {} / {}) SP: {}",
                 idle_manager.player_data.hero_level,
                 idle_manager.player_data.hero_xp,
                 idle_manager.player_data.get_xp_for_next_level(&idle_manager.game_config),
-                idle_manager.player_data.hero_skill_points);
+                idle_manager.player_data.hero_skill_points),
+            x: x_pos,
+            y: y_offset,
+            font_size,
+        });
+        y_offset += font_size;
 
-             for (res_type, amount) in &idle_manager.player_data.resources {
-                 log::info!("{:?}: {:.2}", res_type, amount);
-             }
-             log::info!("Gold Mine 1 Level: {}", idle_manager.player_data.generators.get("gold_mine_1").map_or(0, |g| g.level));
-             if let Some(dust_gen) = idle_manager.player_data.generators.get("elrian_dust_extractor_1") {
-                log::info!("Dust Extractor 1 Level: {}", dust_gen.level);
-             } else {
-                // Initialize dust generator if it doesn't exist and player has enough gold
-                // This is a simple way to introduce new generators.
-                let gold_amount = idle_manager.player_data.resources.get(&epoch_of_elria::idle_systems::ResourceType::Gold).cloned().unwrap_or(0.0);
-                if let Some(dust_config) = idle_manager.game_config.generator_configs.get("elrian_dust_extractor_1") {
-                    if gold_amount >= dust_config.initial_cost && !idle_manager.player_data.generators.contains_key("elrian_dust_extractor_1") {
-                        log::info!("Trying to purchase Elrian Dust Extractor (cost: {} Gold)...", dust_config.initial_cost);
-                        if idle_manager.player_data.resources.get_mut(&epoch_of_elria::idle_systems::ResourceType::Gold).map_or(false, |g| {
-                            if *g >= dust_config.initial_cost {
-                                *g -= dust_config.initial_cost; true
-                            } else { false }
-                        }) {
-                            idle_manager.player_data.generators.insert(
-                                "elrian_dust_extractor_1".to_string(),
-                                epoch_of_elria::idle_systems::GeneratorState::new("elrian_dust_extractor_1".to_string(), epoch_of_elria::idle_systems::ResourceType::ElrianDust)
-                            );
-                            log::info!("Purchased Elrian Dust Extractor!");
-                        } else {
-                            log::info!("Not enough Gold to purchase Dust Extractor.");
-                        }
-                    }
-                }
-             }
-             if let Some(bonus_val) = idle_manager.player_data.permanent_bonuses.get("global_rate_multiplier") {
-                log::info!("Global Rate Multiplier: x{}", bonus_val);
-             }
-             log::info!("--------------------");
+        for (res_type, amount) in &idle_manager.player_data.resources {
+            ui.texts.push(UIText {
+                text: format!("{:?}: {:.2}", res_type, amount),
+                x: x_pos,
+                y: y_offset,
+                font_size,
+            });
+            y_offset += font_size;
         }
 
+        if let Some(gold_mine) = idle_manager.player_data.generators.get("gold_mine_1") {
+            ui.texts.push(UIText {
+                text: format!("Gold Mine 1 Level: {}", gold_mine.level),
+                x: x_pos,
+                y: y_offset,
+                font_size,
+            });
+            y_offset += font_size;
+        }
 
-        // Example: How to access specific generator info
-        // if let Some(gold_mine_1) = idle_manager.player_data.generators.get("gold_mine_1") {
-        //     // gold_mine_1.level, etc.
-        // }
+        if let Some(dust_gen) = idle_manager.player_data.generators.get("elrian_dust_extractor_1") {
+            ui.texts.push(UIText {
+                text: format!("Dust Extractor 1 Level: {}", dust_gen.level),
+                x: x_pos,
+                y: y_offset,
+                font_size,
+            });
+            y_offset += font_size;
+        } else {
+            let gold_amount = idle_manager.player_data.resources.get(&epoch_of_elria::idle_systems::ResourceType::Gold).cloned().unwrap_or(0.0);
+            if let Some(dust_config) = idle_manager.game_config.generator_configs.get("elrian_dust_extractor_1") {
+                if gold_amount >= dust_config.initial_cost && !idle_manager.player_data.generators.contains_key("elrian_dust_extractor_1") {
+                    if idle_manager.player_data.resources.get_mut(&epoch_of_elria::idle_systems::ResourceType::Gold).map_or(false, |g| {
+                        if *g >= dust_config.initial_cost {
+                            *g -= dust_config.initial_cost; true
+                        } else { false }
+                    }) {
+                        idle_manager.player_data.generators.insert(
+                            "elrian_dust_extractor_1".to_string(),
+                            epoch_of_elria::idle_systems::GeneratorState::new("elrian_dust_extractor_1".to_string(), epoch_of_elria::idle_systems::ResourceType::ElrianDust)
+                        );
+                    }
+                }
+            }
+        }
+
+        if let Some(bonus_val) = idle_manager.player_data.permanent_bonuses.get("global_rate_multiplier") {
+            ui.texts.push(UIText {
+                text: format!("Global Rate Multiplier: x{}", bonus_val),
+                x: x_pos,
+                y: y_offset,
+                font_size,
+            });
+            y_offset += font_size;
+        }
     };
 
     log::info!("Starting engine run loop...");
-    engine.run(update_logic)?;
 
-    // Save player data on exit (graceful shutdown)
-    // Note: In a real game, you'd save more frequently or on specific events.
-    // For now, this demonstrates the capability.
-    // We need a way to get the IdleManager's state out of the engine after run loop.
-    // This current structure makes it tricky.
-    // A better approach: GameEngine::run returns the IdleManager or its state,
-    // or GameEngine has a save_on_exit method.
-    // For now, we'll skip direct saving here and assume it happens within IdleManager or needs refactoring.
+    event_loop.run(move |event, _, control_flow| {
+        *control_flow = ControlFlow::Poll;
+
+        match event {
+            Event::WindowEvent { event, .. } => match event {
+                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+                _ => (),
+            },
+            Event::MainEventsCleared => {
+                engine.update(&mut update_logic, &mut ui).unwrap();
+            }
+            _ => (),
+        }
+    });
+
     log::info!("Engine run loop finished.");
-    // engine.get_idle_manager().player_data.save_to_file("player_data.json")?; // Placeholder
-
     log::info!("Application closed.");
     Ok(())
 }

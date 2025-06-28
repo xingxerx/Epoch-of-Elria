@@ -20,7 +20,9 @@ pub use rendering::RenderingSystem;
 pub use input::InputManager;
 pub use physics::PhysicsWorld;
 pub use scene::Scene;
+pub use ui::UI;
 use crate::idle_systems::IdleManager;
+use crate::audio::AudioSystem;
 
 // Engine configuration
 #[derive(Debug, Clone)]
@@ -58,6 +60,7 @@ pub struct GameEngine {
     rendering_system: RenderingSystem,
     input_manager: InputManager,
     physics_world: Option<PhysicsWorld>,
+    audio_system: Option<AudioSystem>,
     scene: Scene,
     idle_manager: IdleManager, // Added IdleManager
     running: bool,
@@ -74,6 +77,11 @@ impl GameEngine {
         } else {
             None
         };
+        let audio_system = if config.enable_audio {
+            Some(AudioSystem::new()?)
+        } else {
+            None
+        };
         let scene = Scene::new("Main Scene");
         let idle_manager = IdleManager::new(); // Initialize IdleManager
 
@@ -82,6 +90,7 @@ impl GameEngine {
             rendering_system,
             input_manager,
             physics_world,
+            audio_system,
             scene,
             idle_manager, // Store IdleManager
             running: false,
@@ -90,48 +99,45 @@ impl GameEngine {
         })
     }
 
-    pub fn run<F>(&mut self, mut update_fn: F) -> Result<(), Box<dyn std::error::Error>>
+        pub fn update<F>(&mut self, mut update_fn: F, ui: &mut UI) -> Result<(), Box<dyn std::error::Error>>
     where
-        F: FnMut(&mut Scene, &mut IdleManager, &InputManager, f32), // Added &mut IdleManager
+        F: FnMut(&mut Scene, &mut IdleManager, &InputManager, f32, &mut UI),
     {
-        self.running = true;
         let mut last_time = std::time::Instant::now();
 
         // Initial update to process offline time before first frame
         self.idle_manager.update(0.0); // Processes offline time based on saved timestamp
 
-        while self.running && self.rendering_system.should_continue() {
-            let current_time = std::time::Instant::now();
-            self.delta_time = current_time.duration_since(last_time).as_secs_f32();
-            self.total_time += self.delta_time;
-            last_time = current_time;
+        let current_time = std::time::Instant::now();
+        self.delta_time = current_time.duration_since(last_time).as_secs_f32();
+        self.total_time += self.delta_time;
+        last_time = current_time;
 
-            // Handle input
-            self.input_manager.update(&mut self.rendering_system);
+        // Handle input
+        self.input_manager.update(&mut self.rendering_system);
 
-            // Update idle systems
-            self.idle_manager.update(self.delta_time as f64);
+        // Update idle systems
+        self.idle_manager.update(self.delta_time as f64);
 
-            // Update game logic (now receives IdleManager)
-            update_fn(&mut self.scene, &mut self.idle_manager, &self.input_manager, self.delta_time);
+        // Update game logic (now receives IdleManager)
+        update_fn(&mut self.scene, &mut self.idle_manager, &self.input_manager, self.delta_time, ui);
 
-            // Update physics
-            if let Some(ref mut physics) = self.physics_world {
-                physics.step(self.delta_time);
-            }
+        // Update physics
+        if let Some(ref mut physics) = self.physics_world {
+            physics.step(self.delta_time);
+        }
 
-            // Update audio
-            if let Some(ref mut audio) = self.audio_system {
-                audio.update(self.delta_time);
-            }
+        // Update audio
+        if let Some(ref mut audio) = self.audio_system {
+            audio.update(self.delta_time);
+        }
 
-            // Render
-            self.rendering_system.render(&self.scene)?;
+        // Render
+        self.rendering_system.render(&self.scene, ui)?;
 
-            // Check for exit conditions
-            if self.input_manager.is_key_pressed(input::Key::Escape) {
-                self.running = false;
-            }
+        // Check for exit conditions
+        if self.input_manager.is_key_pressed(input::Key::Escape) {
+            self.running = false;
         }
 
         // Save game data on graceful exit
@@ -141,6 +147,7 @@ impl GameEngine {
 
         Ok(())
     }
+
 
     pub fn stop(&mut self) {
         // This method might also be a good place to trigger a save if called.

@@ -2,11 +2,14 @@
 
 use crate::math::Vector3D;
 use crate::scene::Scene;
+use crate::ui::UI;
 use crate::EngineConfig;
 use kiss3d::window::Window;
 use kiss3d::light::Light;
 use kiss3d::camera::{ArcBall, FirstPerson, Camera};
-use kiss3d::nalgebra::{Point3, Vector3};
+use kiss3d::nalgebra::{Point2, Point3, Vector3};
+use kiss3d::text::Font;
+use std::path::Path;
 
 pub struct RenderingSystem {
     window: Window,
@@ -63,7 +66,7 @@ impl RenderingSystem {
         !self.window.should_close()
     }
 
-    pub fn render(&mut self, scene: &Scene) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn render(&mut self, scene: &Scene, ui: &UI) -> Result<(), Box<dyn std::error::Error>> {
         // Update FPS counter
         self.update_fps();
         
@@ -78,10 +81,19 @@ impl RenderingSystem {
             if self.show_debug_info {
                 self.render_debug_info();
             }
+            self.render_ui(ui);
         }
         
         self.frame_count += 1;
         Ok(())
+    }
+
+    pub fn render_ui(&mut self, ui: &UI) {
+        let font = Font::default();
+        for text in &ui.texts {
+            let pos = Point2::new(text.x, text.y);
+            self.window.draw_text(&text.text, &pos, text.font_size, &font, &Point3::new(1.0, 1.0, 1.0));
+        }
     }
 
     pub fn set_camera_type(&mut self, camera_type: CameraType) {
