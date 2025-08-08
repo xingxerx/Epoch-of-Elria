@@ -12,6 +12,7 @@ pub mod game_framework;
 pub mod advanced_rendering;
 pub mod game_templates;
 pub mod idle_systems;
+pub mod game_state;
 
 // Re-export commonly used types
 pub use math::{Vector2D, Vector3D};
